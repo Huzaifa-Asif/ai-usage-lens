@@ -6,6 +6,7 @@
   "description": "Local-first token and estimated-cost explorer",
   "scripts": {
     "start": "node src/server.js",
+    "build:static": "node scripts/build-static.js",
     "test": "node --test",
     "check": "node --check src/core.js && node --check public/app.js && npm test",
     "cli": "node src/cli.js",

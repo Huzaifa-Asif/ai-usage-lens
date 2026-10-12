@@ -1,6 +1,6 @@
 # Optional Codex App Server collector
 
-AI Usage Lens includes an optional, user-invoked, read-only stdio collector for an already installed and already authenticated Codex App Server. It is disconnected by default. Development and tests use only a local stub process; no real account integration was exercised.
+AI Usage Lens includes an optional, user-invoked, read-only stdio collector for an already installed and already authenticated Codex App Server. It is disconnected by default. Automated tests use a local stub. A separately authorized live Chrome verification with official CLI 0.162.1 reused existing ChatGPT sign-in and rendered a provider-reported quota window; no prompts were sent. Account activity may be unavailable and remains distinct from request-level billing.
 
 ## Account-access notice
 

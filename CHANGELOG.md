@@ -1,5 +1,11 @@
 # Changelog
 
+## Release preparation — 2026-10-12
+
+- Show available Codex account activity separately from request-ledger analysis.
+- Clarify the empty request-ledger state after account connection and hide account identifiers in quota labels.
+- Build a static hosted edition with collection disabled away from loopback; retain the local companion for signed-in reads.
+
 ## Product name finalized — 2026-10-12
 
 - Renamed the interface, display titles, documentation, and delivery notes to AI Usage Lens.

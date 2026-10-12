@@ -4,6 +4,9 @@ Product name finalized as **AI Usage Lens**. The focused rename passed 55/55 che
 
 ## Delivered
 
+- Release preparation adds separate account token-activity rendering, accurate empty request-ledger messaging, hidden quota account identifiers, and a static hosting artifact whose collector actions are disabled.
+- Signed-in Codex access remains in the loopback local companion. Hosted users can analyze demo/imported data; hosting does not provide universal session access. Directory eligibility is separate and no submission acceptance is claimed.
+
 - Local static dashboard with thread, request, optimization, subscription-limit, and scope views.
 - Browser imports for normalized request ledger, dated price table, and provider-reported quota snapshot.
 - Optional explicit read-only Codex App Server stdio collector with strict account-read allowlist; disabled by default and tested only with a stub.
@@ -12,7 +15,7 @@ Product name finalized as **AI Usage Lens**. The focused rename passed 55/55 che
 
 ## Verification
 
-- `npm run check`: passed with 55/55 tests, including streaming overflow cancellation, direct bridge output bounds, error sanitization, and injected end-to-end checks.
+- `npm run check`: passed with 59/59 tests, including streaming overflow cancellation, direct bridge output bounds, account presentation/redaction, and hosted artifact separation.
 - `npm run cli -- examples/ledger.json examples/prices.json`: passed; reported 1,200 measured tokens and USD 0.00288 example-only estimate.
 - Non-socket static handler checks passed for app/demo assets, CSP, malformed URLs, and traversal rejection. Full browser smoke check was not run because the managed sandbox rejected loopback binding with `listen EPERM 127.0.0.1:4173`. No approval request was made.
 

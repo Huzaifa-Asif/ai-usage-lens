@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
   <meta name="description" content="Private, local token and estimated-cost analysis">
   <title>AI Usage Lens</title>
   <link rel="stylesheet" href="/styles.css">
@@ -42,7 +43,7 @@ OPENAI_ADMIN_KEY=… npm run collect:admin -- --live --start-time UNIX --output 
 
     <details class="fallback"><summary>Import/export fallback</summary><div class="hero-actions"><label class="button">Import ledger<input id="ledger-file" type="file" accept="application/json,.json"></label><label class="button">Import prices<input id="price-file" type="file" accept="application/json,.json"></label><label class="button">Import limits<input id="quota-file" type="file" accept="application/json,.json"></label></div></details>
 
-    <div id="notice" class="notice" role="status">No records loaded. Synthetic demo data is clearly labeled and never leaves this browser.</div>
+    <div id="notice" class="notice" role="status">No request ledger loaded. Connect locally for account activity and quotas, or load the synthetic demo.</div>
 
     <nav class="tabs" aria-label="Views">
       <button class="tab active" role="tab" aria-selected="true" aria-controls="overview" data-view="overview">Overview</button>
@@ -83,12 +84,13 @@ OPENAI_ADMIN_KEY=… npm run collect:admin -- --live --start-time UNIX --output 
     <section id="quotas" class="view" aria-labelledby="quota-title">
       <div class="panel-head"><div><p class="eyebrow">PROVIDER-REPORTED WINDOWS</p><h2 id="quota-title">Subscription limits</h2></div><div><span id="usage-allowed" class="badge">Usage status unknown</span> <span id="quota-source" class="badge">No snapshot</span></div></div>
       <div id="quota-cards" class="metrics"><article><small>Nothing imported</small><strong>—</strong><span>Load a supported snapshot; no limits are invented.</span></article></div>
+      <article class="panel"><h2>Account token activity</h2><div id="account-activity">No account activity collected.</div></article>
       <article class="panel"><h2>How to use this view</h2><p>Remaining percentages, durations, and reset times are shown only when reported by the source. They are quota signals—not dollar cost and not fixed token allowances. Keep API budget decisions separate from Codex subscription windows.</p><p class="fine">AI Usage Lens does not consume resets or send messages. Its live path is an explicit, one-shot local App Server read; refresh requires another user-authorized run.</p></article>
     </section>
 
     <section id="about" class="view" aria-labelledby="scope-title">
       <div class="split"><article class="panel"><p class="eyebrow">CAPABILITY BOUNDARY</p><h2 id="scope-title">What AI Usage Lens can do</h2><ul><li>Analyze explicitly imported, user-owned request records.</li><li>Adapt saved Responses API objects with documented usage fields.</li><li>Estimate API-equivalent cost from a versioned price table.</li><li>Show supported Codex token-activity data after a separate, authorized adapter is connected.</li></ul></article><article class="panel warning"><p class="eyebrow">NEVER CLAIMED</p><h2>What it cannot do</h2><ul><li>Read unseen ChatGPT/Codex transcripts or billing.</li><li>Turn subscription token counts into actual API charges.</li><li>Globally rewrite future prompts or settings.</li><li>Count a tool result as a billable model response.</li></ul></article></div>
-      <article class="panel"><h2>Import contract</h2><p>Use <code>token-lens/v1</code> per-request deltas and stable IDs. Duplicate IDs with identical content are deduplicated; conflicts are rejected. Cumulative snapshots are rejected rather than accidentally double-counted.</p><p class="fine">All processing and preferences stay in this browser. No network requests, credentials, telemetry, or server-side retention.</p></article>
+      <article class="panel"><h2>Import contract</h2><p>Use <code>token-lens/v1</code> per-request deltas and stable IDs. Duplicate IDs with identical content are deduplicated; conflicts are rejected. Cumulative snapshots are rejected rather than accidentally double-counted.</p><p class="fine">Imported data stays in browser memory. Explicit local collection uses the same-origin companion; credentials remain server-side. No telemetry or retained account summaries.</p></article>
     </section>
   </main>
   <footer>AI Usage Lens v0.2 · Local MVP · Estimates are not invoices</footer>

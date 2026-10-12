@@ -1,0 +1,9 @@
+# Deployment and local companion
+
+The hosted edition is a static browser dashboard. Run `npm run build:static` and deploy only `dist-hosted/` at an origin root (assets use absolute paths), with no server functions, environment keys, or localhost proxy. It supports synthetic demo and explicit JSON imports. The generated artifact disables connection actions on every host, including localhost; the hosted page never probes the user's computer or requests credentials. HTML includes a restrictive CSP meta policy. Configure an HTTP CSP header with `frame-ancestors 'none'` and `X-Content-Type-Options: nosniff` on the chosen host because frame restrictions cannot be set by HTML meta.
+
+The local companion is the canonical Node application (`npm start`) bound to `127.0.0.1`. Explicit dashboard actions invoke two supported Codex account reads through an installed, already-authenticated official CLI. No prompts or transcripts are read. Available account activity and quotas remain separate from an instrumented request ledger, and cannot recover unseen per-message/thread history. It reads account summaries across reported sessions, not every subscription session's transcript.
+
+For local Codex collection: install the official CLI, confirm `codex login status`, then run `CODEX_PATH=/absolute/path/to/codex PORT=4181 npm start`. Sign-in, if required, must be completed by the user. No API key is required for this path. Admin reporting is optional and requires a securely provisioned organization Admin API key in the local server environment; no such key is included or configured for release.
+
+Publish the source/archive with MIT attribution and these boundaries. A static site is not an authenticated remote MCP service; directory submission eligibility and review remain separate from source publication and deployment. No directory acceptance or universal subscription integration is claimed.

@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {accountActivityHTML,requestLedgerNotice,quotaSourceLabel} from '../src/presentation.js';
+import {normalizeCodexRateLimits} from '../src/codex-adapter.js';
+test('account activity keeps unknown separate and escapes imported labels',()=>{const html=accountActivityHTML({lifetimeTokens:1234,peakDailyTokens:null,dailyUsageBuckets:[{startDate:'<img src=x onerror=alert(1)>',tokens:42}]});assert.match(html,/1,234/);assert.match(html,/Unavailable/);assert.doesNotMatch(html,/<img/);assert.match(html,/not request-level billing/);assert.match(html,/Per-thread and per-message attribution requires/)});
+test('connected account data does not imply a request ledger',()=>{assert.match(requestLedgerNotice({connected:true}),/capture connected.*activity may be unavailable.*No request ledger/);assert.match(accountActivityHTML(null),/unavailable/)});
+test('quota display and normalized source omit account identity',()=>{const id='00000000-1111-2222-3333-444444444444';assert.doesNotMatch(quotaSourceLabel(`Codex App Server (${id})`),new RegExp(id));assert.doesNotMatch(normalizeCodexRateLimits({accountId:id}).source,new RegExp(id))});

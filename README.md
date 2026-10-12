@@ -1,5 +1,7 @@
 # AI Usage Lens
 
+Release architecture: [hosted static dashboard and local companion](docs/DEPLOYMENT.md). Build `dist-hosted/` with `npm run build:static`; deploy that folder only. Signed-in Codex reads run on the user's computer through the local companion.
+
 AI Usage Lens is the finalized product name. Existing `token-lens/*` data schemas, `token-lens-selection` browser storage, `token_lens_local` client identity, `token-lens-local` private package name, and `skill/token-lens` path are retained for compatibility. Existing imports and saved choices continue to work.
 
 AI Usage Lens is a local-first MVP for exploring token usage per thread and per model request, estimating API-equivalent cost from a dated user-supplied rate card, and producing transparent optimization guidance. It does **not** claim access to unseen ChatGPT/Codex transcripts, actual provider billing, or a global prompt-setting switch.
@@ -63,7 +65,7 @@ Suggestions are deterministic rules over imported data. Selecting one creates a 
 npm run check
 ```
 
-The browser and static server have no external network calls, analytics, API keys, or build step. The optional Admin CLI is the explicit exception: it reads an environment key and calls only two fixed official aggregate-reporting endpoints. Same-origin requests load static app and demo files. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [SECURITY.md](SECURITY.md), and [PRIVACY.md](PRIVACY.md).
+The browser sends only same-origin requests. The static hosted build has no backend, credential access, or telemetry. The local companion can explicitly query supported Codex account endpoints and optional Admin aggregates using credentials kept outside the renderer. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), [SECURITY.md](SECURITY.md), and [PRIVACY.md](PRIVACY.md).
 
 ## Status
 

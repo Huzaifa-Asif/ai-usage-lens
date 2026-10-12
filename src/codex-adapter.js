@@ -73,7 +73,7 @@ export function normalizeCodexRateLimits(result, { capturedAt = new Date().toISO
   }
   return {
     schemaVersion:"token-lens/quotas-v1",capturedAt,
-    source:`Codex App Server account/rateLimits/read${result.accountId?` (${result.accountId})`:""}`,
+    source:'Codex App Server account/rateLimits/read',
     ordinaryUsageAllowed:typeof result.ordinaryUsageAllowed==="boolean"?result.ordinaryUsageAllowed:null,
     windows,
     unvaluedBalances: result.credits ? {hasCredits:result.credits.hasCredits??null,unlimited:result.credits.unlimited??null,balance:result.credits.balance??null,unit:"unspecified"} : null,

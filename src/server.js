@@ -15,7 +15,7 @@ export const serveStatic = async (req, res) => {
     const raw=decodeURIComponent(new URL(req.url,"http://localhost").pathname);
     let target;
     if(raw==="/")target=join(publicRoot,"index.html");
-    else if(raw==="/src/core.js"||raw==="/src/connection-state.js")target=join(root,raw.slice(1));
+    else if(["/src/core.js","/src/connection-state.js","/src/presentation.js"].includes(raw))target=join(root,raw.slice(1));
     else { target=resolve(publicRoot,`.${raw}`); if(!target.startsWith(publicRoot+sep)||raw.split("/").some(x=>x.startsWith(".")))throw new Error("not allowed"); }
     const body = await readFile(target);
     res.writeHead(200, { "content-type": types[extname(target)] || "application/octet-stream", ...STATIC_HEADERS });
