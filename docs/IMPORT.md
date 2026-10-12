@@ -48,7 +48,7 @@ For `kind: "tool_result"`, every usage value must be `null` or `0`. A tool call 
 }
 ```
 
-Token Lens selects the latest matching rate not later than the record date. It does not convert currencies. Missing rates remain unknown. Keep a provider URL, contract identifier, or internal approval note in `provenance`; do not assume the synthetic demo rates are real.
+AI Usage Lens selects the latest matching rate not later than the record date. It does not convert currencies. Missing rates remain unknown. Keep a provider URL, contract identifier, or internal approval note in `provenance`; do not assume the synthetic demo rates are real.
 
 ## Responses API adapter
 
@@ -74,4 +74,4 @@ If that response includes `threadUsage`, provider-estimated credit micros and nu
 
 ## Subscription quota snapshots
 
-Use `token-lens/quotas-v1` for provider-reported windows. Each window may contain `usedPercent`, `remainingPercent`, `windowDurationMinutes`, and `resetsAt`; unavailable values stay `null`. Token Lens does not invent daily, weekly, or monthly windows and does not infer a fixed token allowance from a percentage. See `examples/quotas.json`.
+Use `token-lens/quotas-v1` for provider-reported windows. Each window may contain `usedPercent`, `remainingPercent`, `windowDurationMinutes`, and `resetsAt`; unavailable values stay `null`. AI Usage Lens does not invent daily, weekly, or monthly windows and does not infer a fixed token allowance from a percentage. See `examples/quotas.json`.

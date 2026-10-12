@@ -1,6 +1,6 @@
 # Optional Codex App Server collector
 
-Token Lens includes an optional, user-invoked, read-only stdio collector for an already installed and already authenticated Codex App Server. It is disconnected by default. Development and tests use only a local stub process; no real account integration was exercised.
+AI Usage Lens includes an optional, user-invoked, read-only stdio collector for an already installed and already authenticated Codex App Server. It is disconnected by default. Development and tests use only a local stub process; no real account integration was exercised.
 
 ## Account-access notice
 
@@ -26,7 +26,7 @@ To select an installed executable explicitly:
 npm run collect:codex -- --live --output ./capture.json --codex /absolute/path/to/codex
 ```
 
-`--live` is mandatory. Output is created once with owner-only permissions and never overwritten. The CLI prints an account-access notice before spawning `codex app-server`. Import the resulting file with **Import limits**; Token Lens uses its normalized quota snapshot and retains the raw documented responses for auditability.
+`--live` is mandatory. Output is created once with owner-only permissions and never overwritten. The CLI prints an account-access notice before spawning `codex app-server`. Import the resulting file with **Import limits**; AI Usage Lens uses its normalized quota snapshot and retains the raw documented responses for auditability.
 
 ## Safety and limitations
 

@@ -1,4 +1,6 @@
-# Token Lens MVP delivery — 2026-10-12
+# AI Usage Lens MVP delivery — 2026-10-12
+
+Product name finalized as **AI Usage Lens**. The focused rename passed 55/55 checks and independent review. Legacy `token-lens` data schemas, browser storage key, package/client identities, skill path, and archive filenames remain compatible; the existing Library identities are updated in place.
 
 ## Delivered
 

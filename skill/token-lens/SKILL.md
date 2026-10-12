@@ -1,9 +1,9 @@
 ---
 name: token-lens
-description: Analyze user-provided Token Lens ledgers and generate honest usage/cost optimization guidance.
+description: Analyze user-provided AI Usage Lens ledgers and generate honest usage/cost optimization guidance.
 ---
 
-# Token Lens
+# AI Usage Lens
 
 Use this skill only with files the user explicitly provides or identifies. Validate them with `npm run cli -- <ledger> <prices>` from this project.
 

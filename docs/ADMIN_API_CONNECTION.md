@@ -2,7 +2,7 @@
 
 OpenAI documents read-only organization aggregates at `GET /v1/organization/usage/completions` and `GET /v1/organization/costs`. They require an organization Admin API key; an ordinary project key or ChatGPT sign-in is not a substitute. Usage buckets can be grouped and paginated, while costs are daily aggregates. Neither endpoint can retrospectively produce per-thread or per-message attribution.
 
-Token Lens ships a local CLI connector using an environment-provided key and a fixed two-endpoint GET allowlist. It rejects redirects, bounds pagination/results/time, supports cancellation, and reports sanitized configured-but-unverified, connected capture, unauthorized, forbidden, rate-limited, timed-out, and disconnected conditions. Keys never enter the UI, browser storage, logs, captures, or prompts. No real key was used during development; dependency-injected fixtures verify transport behavior.
+AI Usage Lens ships a local CLI connector using an environment-provided key and a fixed two-endpoint GET allowlist. It rejects redirects, bounds pagination/results/time, supports cancellation, and reports sanitized configured-but-unverified, connected capture, unauthorized, forbidden, rate-limited, timed-out, and disconnected conditions. Keys never enter the UI, browser storage, logs, captures, or prompts. No real key was used during development; dependency-injected fixtures verify transport behavior.
 
 ```sh
 OPENAI_ADMIN_KEY=… npm run collect:admin -- --check-config

@@ -1,5 +1,10 @@
 # Changelog
 
+## Product name finalized — 2026-10-12
+
+- Renamed the interface, display titles, documentation, and delivery notes to AI Usage Lens.
+- Kept established schemas, package/client identities, skill path, and browser storage keys compatible.
+
 ## 0.2.0 — 2026-10-12
 
 - Added a strict, optional read-only Codex App Server collector and synthetic protocol fixture.

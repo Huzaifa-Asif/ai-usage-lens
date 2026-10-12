@@ -22,7 +22,7 @@ const text = (v, path, issues, required = true) => {
   return v;
 };
 
-/** Normalize the documented Token Lens v1 envelope. Cumulative counters are rejected. */
+/** Normalize the documented AI Usage Lens v1 envelope. Cumulative counters are rejected. */
 export function normalizeLedger(raw) {
   const issues = [];
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new LedgerError("Expected a JSON object");
@@ -168,7 +168,7 @@ export function suggestions(analysis) {
   if (input > output * 3) out.push({ id:"trim-context", title:"Trim repeated context", evidence:`Input is ${ratio(input, output)}× output across measured requests.`, guidance:"Keep stable instructions first, remove duplicate history, and attach only relevant excerpts. Preserve requirements and safety constraints.", context:"Prefer concise relevant context. Do not remove requirements, constraints, evidence, or safety instructions." });
   if (input >= 1000 && cached / input < .25) out.push({ id:"cache-prefix", title:"Stabilize reusable prefixes", evidence:`Only ${Math.round(cached/input*100)}% of measured input was reported cached.`, guidance:"For supported API workflows, place identical reusable instructions and examples at the beginning. Caching is automatic and not guaranteed.", context:"When using an API workflow, keep genuinely reusable instructions in a stable prefix; do not alter task-specific details." });
   if (output > 2000) out.push({ id:"cap-output", title:"Ask for a tighter answer", evidence:`Measured output totals ${output.toLocaleString()} tokens.`, guidance:"State the desired format and length; in an API workflow, consider a supported output-token cap after testing truncation risk.", context:"Be concise, lead with the result, and stop after the requested deliverable unless detail is necessary." });
-  if (analysis.total.unknownPrice) out.push({ id:"complete-prices", title:"Complete the price table", evidence:`${analysis.total.unknownPrice} response(s) have no applicable rate.`, guidance:"Add a dated rate with provenance. Do not treat unknown cost as zero.", context:"No prompt change—update Token Lens pricing data first." });
+  if (analysis.total.unknownPrice) out.push({ id:"complete-prices", title:"Complete the price table", evidence:`${analysis.total.unknownPrice} response(s) have no applicable rate.`, guidance:"Add a dated rate with provenance. Do not treat unknown cost as zero.", context:"No prompt change—update AI Usage Lens pricing data first." });
   if (analysis.total.missing) out.push({ id:"capture-usage", title:"Capture response usage", evidence:`${analysis.total.missing} response(s) lack input or output counts.`, guidance:"Save documented response usage fields in the controlled workflow. Do not estimate missing counts from text length.", context:"No prompt change—capture supported usage metadata in the calling application." });
   return out;
 }

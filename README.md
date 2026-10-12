@@ -1,6 +1,8 @@
-# Token Lens
+# AI Usage Lens
 
-Token Lens is a local-first MVP for exploring token usage per thread and per model request, estimating API-equivalent cost from a dated user-supplied rate card, and producing transparent optimization guidance. It does **not** claim access to unseen ChatGPT/Codex transcripts, actual provider billing, or a global prompt-setting switch.
+AI Usage Lens is the finalized product name. Existing `token-lens/*` data schemas, `token-lens-selection` browser storage, `token_lens_local` client identity, `token-lens-local` private package name, and `skill/token-lens` path are retained for compatibility. Existing imports and saved choices continue to work.
+
+AI Usage Lens is a local-first MVP for exploring token usage per thread and per model request, estimating API-equivalent cost from a dated user-supplied rate card, and producing transparent optimization guidance. It does **not** claim access to unseen ChatGPT/Codex transcripts, actual provider billing, or a global prompt-setting switch.
 
 ## Quick start
 
@@ -37,13 +39,13 @@ Connection status: when launched with `npm start`, the same-origin loopback serv
 
 ## Capability boundary
 
-The OpenAI Responses API exposes request usage fields. Cached input is included within input, and reasoning is included within output, so Token Lens subtracts cached input from ordinary input pricing and never adds reasoning again. Prompt caching is automatic on supported API models and benefits stable prefixes, but a cache hit is not guaranteed. See the official [Prompt caching guide](https://developers.openai.com/api/docs/guides/prompt-caching) and [API pricing](https://developers.openai.com/api/docs/pricing).
+The OpenAI Responses API exposes request usage fields. Cached input is included within input, and reasoning is included within output, so AI Usage Lens subtracts cached input from ordinary input pricing and never adds reasoning again. Prompt caching is automatic on supported API models and benefits stable prefixes, but a cache hit is not guaranteed. See the official [Prompt caching guide](https://developers.openai.com/api/docs/guides/prompt-caching) and [API pricing](https://developers.openai.com/api/docs/pricing).
 
 Codex App Server documents `thread/tokenUsage/updated` plus authenticated `account/usage/read` summaries. Account activity can be unavailable and is not message-level billing. The import adapter remains offline. Separately, the optional `--live` collector can spawn an already installed, already authenticated local App Server and make only two allowlisted account reads; it never logs in, stores credentials, or runs automatically. See the official [Codex App Server docs](https://learn.chatgpt.com/docs/app-server).
 
 When authorized `account/usage/read` returns thread estimates, the adapter preserves provider-estimated credit micros and nullable USD micros separately with `provider_estimate_not_invoice` provenance. These values are never merged with rate-card API estimates or presented as an invoice.
 
-Codex `UserPromptSubmit` hooks can add developer context or block a prompt; the documented output does not replace the user's prompt. Token Lens only previews this JSON. It never installs a hook. See the official [Codex Hooks docs](https://learn.chatgpt.com/docs/hooks).
+Codex `UserPromptSubmit` hooks can add developer context or block a prompt; the documented output does not replace the user's prompt. AI Usage Lens only previews this JSON. It never installs a hook. See the official [Codex Hooks docs](https://learn.chatgpt.com/docs/hooks).
 
 ChatGPT subscription activity is not converted into claimed API charges. Rate-card output is labeled an estimate, never an invoice. Organization usage/cost exports may be imported only after a caller explicitly transforms request-level data; aggregate buckets cannot truthfully be attributed back to messages.
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Private, local token and estimated-cost analysis">
-  <title>Token Lens</title>
+  <title>AI Usage Lens</title>
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/quotas.css">
   <link rel="stylesheet" href="/connection.css">
@@ -12,7 +12,7 @@
 <body>
   <a class="skip" href="#main">Skip to analysis</a>
   <header>
-    <div class="brand"><span class="mark" aria-hidden="true">TL</span><div><strong>Token Lens</strong><small>Local usage & cost explorer</small></div></div>
+    <div class="brand"><span class="mark" aria-hidden="true">AI</span><div><strong>AI Usage Lens</strong><small>Local usage & cost explorer</small></div></div>
     <div class="status"><span></span> Local-only workflow</div>
   </header>
   <main id="main">
@@ -34,7 +34,7 @@
       <div id="connection-permission" hidden><div class="scope-box"><strong>Permission requested</strong><ul><li>Read account rate-limit windows.</li><li>Read account token-activity summary and optional thread estimate.</li><li>Return direct results in memory; fallback CLI writes an owner-only file.</li></ul><p class="fine">No transcripts, prompts, login, settings changes, resets, hooks, or background sync. Every refresh requires another explicit action.</p></div><button id="authorize" class="primary">I understand — continue</button><button id="cancel-connect" class="ghost">Cancel</button></div>
       <div id="connection-command" hidden><button id="direct-codex" class="primary">Collect directly now</button><p class="fine">Uses this loopback server on the same origin; no credential enters the browser.</p><p><strong>Fallback:</strong> run the CLI and select its capture:</p><pre id="collector-command">npm run collect:codex -- --live --output token-lens-capture.json</pre><button id="copy-command">Copy command</button><label class="button">Load capture<input id="capture-file" type="file" accept="application/json,.json"></label><button id="cancel-command" class="ghost">Cancel</button></div>
       <div id="connection-result" hidden><p id="connection-detail"></p><button id="reconnect">Refresh / reconnect</button><button id="disconnect" class="ghost">Disconnect view</button></div>
-      <details class="admin-path"><summary>Connect organization API reporting</summary><p><span class="badge">Configured outside browser · unverified</span></p><p>Requires <code>OPENAI_ADMIN_KEY</code> in the server process environment. Token Lens never asks for or stores it in this page.</p><button id="direct-admin" class="primary">Test and collect aggregates</button><pre>OPENAI_ADMIN_KEY=… npm start
+      <details class="admin-path"><summary>Connect organization API reporting</summary><p><span class="badge">Configured outside browser · unverified</span></p><p>Requires <code>OPENAI_ADMIN_KEY</code> in the server process environment. AI Usage Lens never asks for or stores it in this page.</p><button id="direct-admin" class="primary">Test and collect aggregates</button><pre>OPENAI_ADMIN_KEY=… npm start
 OPENAI_ADMIN_KEY=… npm run collect:admin -- --check-config
 OPENAI_ADMIN_KEY=… npm run collect:admin -- --live --start-time UNIX --output admin-capture.json</pre><p class="fine">A successful command verifies read access to fixed aggregate usage and cost endpoints. Aggregate buckets cannot be attributed retrospectively to threads or messages.</p></details>
       <section id="admin-results" hidden><h3>Organization aggregates</h3><p id="admin-summary"></p><pre id="admin-json"></pre></section>
@@ -83,15 +83,15 @@ OPENAI_ADMIN_KEY=… npm run collect:admin -- --live --start-time UNIX --output 
     <section id="quotas" class="view" aria-labelledby="quota-title">
       <div class="panel-head"><div><p class="eyebrow">PROVIDER-REPORTED WINDOWS</p><h2 id="quota-title">Subscription limits</h2></div><div><span id="usage-allowed" class="badge">Usage status unknown</span> <span id="quota-source" class="badge">No snapshot</span></div></div>
       <div id="quota-cards" class="metrics"><article><small>Nothing imported</small><strong>—</strong><span>Load a supported snapshot; no limits are invented.</span></article></div>
-      <article class="panel"><h2>How to use this view</h2><p>Remaining percentages, durations, and reset times are shown only when reported by the source. They are quota signals—not dollar cost and not fixed token allowances. Keep API budget decisions separate from Codex subscription windows.</p><p class="fine">Token Lens does not consume resets or send messages. Its live path is an explicit, one-shot local App Server read; refresh requires another user-authorized run.</p></article>
+      <article class="panel"><h2>How to use this view</h2><p>Remaining percentages, durations, and reset times are shown only when reported by the source. They are quota signals—not dollar cost and not fixed token allowances. Keep API budget decisions separate from Codex subscription windows.</p><p class="fine">AI Usage Lens does not consume resets or send messages. Its live path is an explicit, one-shot local App Server read; refresh requires another user-authorized run.</p></article>
     </section>
 
     <section id="about" class="view" aria-labelledby="scope-title">
-      <div class="split"><article class="panel"><p class="eyebrow">CAPABILITY BOUNDARY</p><h2 id="scope-title">What Token Lens can do</h2><ul><li>Analyze explicitly imported, user-owned request records.</li><li>Adapt saved Responses API objects with documented usage fields.</li><li>Estimate API-equivalent cost from a versioned price table.</li><li>Show supported Codex token-activity data after a separate, authorized adapter is connected.</li></ul></article><article class="panel warning"><p class="eyebrow">NEVER CLAIMED</p><h2>What it cannot do</h2><ul><li>Read unseen ChatGPT/Codex transcripts or billing.</li><li>Turn subscription token counts into actual API charges.</li><li>Globally rewrite future prompts or settings.</li><li>Count a tool result as a billable model response.</li></ul></article></div>
+      <div class="split"><article class="panel"><p class="eyebrow">CAPABILITY BOUNDARY</p><h2 id="scope-title">What AI Usage Lens can do</h2><ul><li>Analyze explicitly imported, user-owned request records.</li><li>Adapt saved Responses API objects with documented usage fields.</li><li>Estimate API-equivalent cost from a versioned price table.</li><li>Show supported Codex token-activity data after a separate, authorized adapter is connected.</li></ul></article><article class="panel warning"><p class="eyebrow">NEVER CLAIMED</p><h2>What it cannot do</h2><ul><li>Read unseen ChatGPT/Codex transcripts or billing.</li><li>Turn subscription token counts into actual API charges.</li><li>Globally rewrite future prompts or settings.</li><li>Count a tool result as a billable model response.</li></ul></article></div>
       <article class="panel"><h2>Import contract</h2><p>Use <code>token-lens/v1</code> per-request deltas and stable IDs. Duplicate IDs with identical content are deduplicated; conflicts are rejected. Cumulative snapshots are rejected rather than accidentally double-counted.</p><p class="fine">All processing and preferences stay in this browser. No network requests, credentials, telemetry, or server-side retention.</p></article>
     </section>
   </main>
-  <footer>Token Lens v0.2 · Local MVP · Estimates are not invoices</footer>
+  <footer>AI Usage Lens v0.2 · Local MVP · Estimates are not invoices</footer>
   <script type="module" src="/app.js"></script>
 </body>
 </html>
