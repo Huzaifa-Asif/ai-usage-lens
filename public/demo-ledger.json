@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "token-lens/v1",
+  "usageSemantics": "per_request",
+  "records": [
+    {"id":"demo-01","threadId":"customer-research","messageId":"turn-01","occurredAt":"2026-10-10T09:12:00Z","model":"demo-pro","kind":"model_response","usage":{"inputTokens":12400,"cachedInputTokens":800,"outputTokens":1250,"reasoningTokens":310},"promptChars":38000,"repeatedContextChars":21000,"source":"synthetic-demo"},
+    {"id":"demo-02","threadId":"customer-research","messageId":"turn-02","occurredAt":"2026-10-10T09:20:00Z","model":"demo-pro","kind":"model_response","usage":{"inputTokens":14200,"cachedInputTokens":9200,"outputTokens":1680,"reasoningTokens":480},"source":"synthetic-demo"},
+    {"id":"demo-03","threadId":"release-notes","messageId":"turn-01","occurredAt":"2026-10-11T14:02:00Z","model":"demo-mini","kind":"model_response","usage":{"inputTokens":2200,"cachedInputTokens":0,"outputTokens":830,"reasoningTokens":null},"source":"synthetic-demo"},
+    {"id":"demo-04","threadId":"release-notes","messageId":"tool-01","occurredAt":"2026-10-11T14:03:00Z","model":"none","kind":"tool_result","usage":{"inputTokens":null,"cachedInputTokens":null,"outputTokens":null,"reasoningTokens":null},"source":"synthetic-demo"},
+    {"id":"demo-05","threadId":"architecture-review","messageId":"turn-01","occurredAt":"2026-10-12T03:40:00Z","model":"unpriced-model","kind":"model_response","usage":{"inputTokens":5800,"cachedInputTokens":null,"outputTokens":null,"reasoningTokens":null},"source":"synthetic-demo"}
+  ]
+}

@@ -1,0 +1,9 @@
+.quota-bar { height: 6px; background: #e5e9e4; border-radius: 99px; margin-top: 12px; overflow: hidden; }
+.quota-bar i { display: block; height: 100%; background: var(--amber); }
+.button input { display:block; position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
+.button:focus-within { outline:3px solid var(--amber); outline-offset:2px; }
+.mix { display:grid; height:auto; overflow:visible; background:transparent; gap:9px; }
+.mix div { display:grid; grid-template-columns:150px 1fr; align-items:center; gap:10px; }
+.mix progress,.quota-progress { width:100%; accent-color:var(--green); }
+.mix .cached { accent-color:#71ad92; }.mix .cache-write { accent-color:#8769b4; }.mix .output { accent-color:#e3a932; }
+.quota-progress { margin-top:12px; }

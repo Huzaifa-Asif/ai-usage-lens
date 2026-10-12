@@ -1,0 +1,1 @@
+{"schemaVersion":"token-lens/v1","usageSemantics":"per_request","records":[{"id":"example-1","threadId":"planning","messageId":"turn-1","occurredAt":"2026-10-12T04:00:00Z","model":"example-model","kind":"model_response","usage":{"inputTokens":1000,"cachedInputTokens":400,"outputTokens":200,"reasoningTokens":50},"source":"example-only"}]}

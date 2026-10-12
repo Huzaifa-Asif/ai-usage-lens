@@ -1,0 +1,1 @@
+{"schemaVersion":"token-lens/prices-v1","rates":[{"model":"example-model","currency":"USD","effectiveFrom":"2026-10-01","inputPerMillion":2,"cachedInputPerMillion":0.2,"outputPerMillion":8,"provenance":"example-only; replace before use"}]}

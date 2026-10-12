@@ -1,0 +1,7 @@
+{
+  "schemaVersion":"token-lens/prices-v1",
+  "rates":[
+    {"model":"demo-pro","currency":"USD","effectiveFrom":"2026-10-01","inputPerMillion":2.0,"cachedInputPerMillion":0.2,"outputPerMillion":8.0,"provenance":"Synthetic demo rate; not OpenAI pricing"},
+    {"model":"demo-mini","currency":"USD","effectiveFrom":"2026-10-01","inputPerMillion":0.4,"cachedInputPerMillion":0.04,"outputPerMillion":1.6,"provenance":"Synthetic demo rate; not OpenAI pricing"}
+  ]
+}

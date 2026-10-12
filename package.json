@@ -1,0 +1,17 @@
+{
+  "name": "token-lens-local",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first token and estimated-cost explorer",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "check": "node --check src/core.js && node --check public/app.js && npm test",
+    "cli": "node src/cli.js",
+    "collect:codex": "node src/collect-codex.js",
+    "collect:admin": "node src/collect-admin.js"
+  },
+  "license": "MIT",
+  "engines": { "node": ">=20" }
+}
