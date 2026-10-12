@@ -61,6 +61,8 @@ Suggestions are deterministic rules over imported data. Selecting one creates a 
 
 ## Development
 
+GitHub Actions checks syntax, all fixture-only tests, and the static build on Node 20, 22, and 24. It uses pinned official actions, read-only repository permissions, and no secrets or account calls. The immutable v0.2.0 release predates this workflow and was verified locally and from extracted artifacts; CI results apply to subsequent commits.
+
 ```sh
 npm run check
 ```
