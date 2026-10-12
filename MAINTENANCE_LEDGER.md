@@ -24,6 +24,6 @@ Cancel previously changed the UI label without aborting its HTTP request/backend
 
 ## Queue
 
-The implementation commit `99ecc282d188a3bb6ebc12fb5a0ba2f3137d5d34` is local. Automatic approval review rejected pushing this substantive update directly to public main because this maintenance request authorized preparation/verification but did not explicitly authorize the push. The command was not executed and no workaround/retry was attempted. New-commit remote CI and publication are therefore blocked/not-run. The verified historical CI remains the prior `1c48603` run; it is not evidence for this new fix.
+Automatic approval review initially rejected the maintenance push. The parent then supplied explicit user authorization for recurring personal-app publication and justified fixes. The same push was retried once under that evidence and succeeded. Remote main was verified as `cb84b316c0abf07e511d131d5084c460c25557c9`; [maintenance CI run 38289976128](https://github.com/Huzaifa-Asif/ai-usage-lens/actions/runs/38289976128) completed successfully on Node 20, 22, and 24. No denial was bypassed and no authentication or account settings were changed. The final documentation follow-up and matching artifacts are recorded in the release handoff.
 
 Deploy/review v0.2.1 only through the active coordinator after exact-commit CI and asset checks. Further directory work requires an eligible package and human review information; it is not a prerequisite for using the local companion. No new app was started.
