@@ -5,3 +5,6 @@ node_modules/
 .env
 .env.*
 *-capture.json
+artifacts/*.tgz
+artifacts/*.bundle
+artifacts/pack.json

@@ -61,6 +61,8 @@ Suggestions are deterministic rules over imported data. Selecting one creates a 
 
 ## Development
 
+Use Cancel while a local read is running to abort its browser request; the companion aborts the collector when that connection closes. Demo/import/disconnect supersede a pending read, and late responses are ignored. Only one collection runs at a time. `npm run integration` exercises this with synthetic HTTP transport; it skips explicitly if loopback listening is blocked by the execution environment. No test needs an account or key.
+
 GitHub Actions checks syntax, all fixture-only tests, and the static build on Node 20, 22, and 24. It uses pinned official actions, read-only repository permissions, and no secrets or account calls. The immutable v0.2.0 release predates this workflow and was verified locally and from extracted artifacts; CI results apply to subsequent commits.
 
 ```sh

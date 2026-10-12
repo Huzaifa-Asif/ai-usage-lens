@@ -1,5 +1,7 @@
 # AI Usage Lens MVP delivery — 2026-10-12
 
+October 13 MYT maintenance: v0.2.1 fixes real browser/HTTP cancellation and stale-result suppression. Final permitted suite passes 72/72; independent manual scoped review passes. See MAINTENANCE_LEDGER.md for historical release/CI distinctions, current docs, and queued rollout. No deployment or live-account read was performed during maintenance.
+
 Product name finalized as **AI Usage Lens**. The focused rename passed 55/55 checks and independent review. Legacy `token-lens` data schemas, browser storage key, package/client identities, skill path, and archive filenames remain compatible; the existing Library identities are updated in place.
 
 ## Delivered

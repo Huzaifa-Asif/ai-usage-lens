@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1 — October 13 MYT maintenance
+
+- Cancel aborts the matching browser request and propagates through HTTP disconnect to the bounded local collector.
+- Late cancelled results cannot refill views after Cancel, demo, import, or disconnect.
+- One collection runs at a time in the browser and companion; Codex and Admin cancel controls cannot cancel each other.
+- Added synthetic UI, HTTP lifecycle, and ownership regressions. Hosted collectors remain disabled.
+
 ## Release preparation — 2026-10-12
 
 - Show available Codex account activity separately from request-ledger analysis.

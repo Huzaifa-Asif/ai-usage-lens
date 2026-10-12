@@ -1,6 +1,6 @@
 {
   "name": "token-lens-local",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "Local-first token and estimated-cost explorer",
@@ -8,7 +8,8 @@
     "start": "node src/server.js",
     "build:static": "node scripts/build-static.js",
     "test": "node --test",
-    "check": "node --check src/core.js && node --check public/app.js && npm test",
+    "check": "node scripts/check-syntax.js && npm test",
+    "integration": "node --test test/http-integration.test.js test/bridge-lifecycle.test.js",
     "cli": "node src/cli.js",
     "collect:codex": "node src/collect-codex.js",
     "collect:admin": "node src/collect-admin.js"
