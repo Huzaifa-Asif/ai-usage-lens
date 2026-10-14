@@ -1,6 +1,6 @@
 # AI Usage Lens 0.3.0 delivery
 
-- Source commit: `ce7dd67d51d0ef457c4c354db37d196db9a65f91`
+- Source commit: `ce7dd67632bf391e13e54f6d80f058180ecf13a4`
 - Source archive: `ai-usage-lens-source-v0.3.0.tgz`
 - Source archive SHA-256: `328f5527b91c71540d6366d0c87f042059f59d93e46e3e2a2a97136ca25bbba9`
 - Source archive size: 92,320 bytes
