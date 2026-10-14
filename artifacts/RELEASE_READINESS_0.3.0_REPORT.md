@@ -18,15 +18,17 @@ No source publication, hosted deployment, credential creation, persistent grant,
 
 ## Verification
 
-- `npm run check`: 87 passed, 0 failed, 1 skipped. The skipped synthetic HTTP socket test reports sandbox `EPERM`; equivalent handler, cancellation, and retry behavior is covered without a socket.
+- `npm run check`: 96 passed, 0 failed, 1 skipped. The skipped synthetic HTTP socket test reports sandbox `EPERM`; equivalent handler, cancellation, and retry behavior is covered without a socket.
 - `npm run build:static`: passed. Output contains no server, collectors, credentials, or account data.
 - `npm run build:plugin`: passed. Output contains no server, collectors, hooks, credentials, or account data.
 - `git diff --check`: passed.
 - Browser QA on the local companion: light/dark desktop, 390 × 844 mobile, reduced motion, daily/weekly/monthly periods, provider filtering, token/cost chart series, message drill-down, connection error states, editable skill draft, and download initiation. No console warnings/errors and no horizontal mobile overflow.
-- Independent review identified Cursor response overcollection and spend-shape/pagination errors, import-order and scoped-ID context accumulation problems, missing visual cost series/filter coupling, missing bridge coverage, absent live announcements, and an infinite-ratio skill edge case. All were addressed and retested. The final focused verdict was **Ready with known limitations** with no material correctness, privacy, or security blocker.
+- Independent review identified Cursor response overcollection and spend-shape/pagination errors, import-order and scoped-ID context accumulation problems, missing visual cost series/filter coupling, missing bridge coverage, absent live announcements, an infinite-ratio skill edge case, and filesystem-boundary issues in the delivery adapter. All were addressed and retested. The final verdict was **GO for the credential-free delivery implementation**, with no remaining material correctness, privacy, security, accessibility, or regression blocker.
 
 ## Source and deployment status
 
-The 0.2.2 unpublished checkpoint was reconstructed exactly from preserved artifacts before work began and saved locally as commit `d9870c042a52d6b6cbbe85f3ef72cf46ca79f702`. The immutable public/hosted release remains 0.2.0. The earlier authorization denial for source publication was not bypassed or retried. Publishing the new commit or deploying `dist-hosted/` remains a separate approval-gated action.
+The 0.2.2 unpublished checkpoint was reconstructed exactly from preserved artifacts before work began and saved locally as commit `d9870c042a52d6b6cbbe85f3ef72cf46ca79f702`. The release ledger verifies public source `main` at 0.2.1; the hosted version was not inspected and remains separately unverified. The historical automatic approval rejection applied to the maintenance push, which later succeeded only after explicit publication authorization. No 0.3.0 publication was attempted. This checkout's `origin` is a local handoff bundle rather than the GitHub write remote, so a new source push needs explicit approval for the exact repository/branch and external write. Deploying `dist-hosted/` separately needs a named site/project and explicit approval.
+
+The current candidate also includes credential-free Codex, Claude Code and Cursor delivery plans, effective-consumer disclosure, exact-plan approval, an allowlisted local adapter with idempotency/collision protection/rollback, and frozen company-submission review boundaries. Tests exercise disposable synthetic client directories only. No real client root, persistent grant, Promptalio tenant, hosted database, reviewer assignment, sharing state or vendor sync was changed.
 
 Promptalio remained read-only at branch `handoff/promptalio-visual-refresh`, commit `e63e15fb84556e6e3ede0cc341fbe887dedb47ec`.

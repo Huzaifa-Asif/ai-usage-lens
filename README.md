@@ -57,6 +57,8 @@ ChatGPT subscription activity is not converted into claimed API charges. Rate-ca
 
 See [docs/IMPORT.md](docs/IMPORT.md), [schemas/ledger.schema.json](schemas/ledger.schema.json), [schemas/prices.schema.json](schemas/prices.schema.json), and [schemas/quotas.schema.json](schemas/quotas.schema.json). Input is a `token-lens/v1` envelope of per-request deltas. A visible chat message can involve retries, tools, or multiple model requests, so each record is one model request associated with application-owned thread/message IDs. Tool results are not automatically billable model responses.
 
+Private skill drafts and credential-free multi-client delivery planning are documented in [docs/SKILL_DELIVERY.md](docs/SKILL_DELIVERY.md). Browser previews never install. The filesystem adapter is exercised only against caller-authorized roots; repository tests use disposable synthetic Codex, Claude Code and Cursor folders.
+
 ## Optimization scope
 
 Suggestions are deterministic rules over imported data. Selecting one creates a preview that the user can copy. The manual checklist is suitable for ChatGPT or Codex. The Codex JSON is only developer context for an intentionally configured trusted local hook. It is not a prompt rewrite or global setting. Reset removes the selection from browser local storage.

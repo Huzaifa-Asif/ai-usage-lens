@@ -1,6 +1,6 @@
 # Optimization skill exports
 
-AI Usage Lens can turn a supported optimization signal into an editable `SKILL.md` draft for Codex or Cursor. This is a download-only workflow: the app does not install the file, create directories, enable a skill, or modify client settings.
+AI Usage Lens can turn a supported optimization signal into an editable `SKILL.md` draft for Codex, Claude Code, or Cursor. Browser export is download-only: the page does not install the file, create directories, enable a skill, or modify client settings.
 
 ## Evidence boundary
 
@@ -16,8 +16,11 @@ It never includes prompt or response text, conversation titles, message IDs, pro
 
 After reviewing and editing the download, a user may manually place it at the client-specific path shown in the interface:
 
-- Codex: `.codex/skills/<skill-name>/SKILL.md`
+- Codex: `.agents/skills/<skill-name>/SKILL.md`
+- Claude Code: `.claude/skills/<skill-name>/SKILL.md`
 - Cursor: `.cursor/skills/<skill-name>/SKILL.md`
+
+Cursor may also discover compatible `.agents/skills` and `.claude/skills` roots. A companion plan must disclose that effective consumer and avoid duplicate copies before requesting consent.
 
 The YAML frontmatter contains only the required `name` and `description`. The Markdown body contains the aggregate evidence, bounded instructions, limitations, and a client note.
 
