@@ -1,5 +1,6 @@
 dist-hosted/
 dist-plugin/
+dist-clients/
 artifacts/*.zip
 token-lens-mvp.tgz
 token-lens-source.bundle

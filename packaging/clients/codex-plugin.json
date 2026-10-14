@@ -1,0 +1,10 @@
+{
+  "name": "ai-usage-lens",
+  "version": "0.3.0",
+  "description": "Analyze user-provided usage ledgers and explain estimated costs with transparent manual optimization guidance.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AI Usage Lens",
+    "shortDescription": "Inspect tokens and estimates"
+  }
+}

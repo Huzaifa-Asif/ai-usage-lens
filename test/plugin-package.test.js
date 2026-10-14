@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,writeFile,readFile,cp,rm,stat} from 'node:fs/promises';
+import {mkdtemp,writeFile,readFile,cp,rm,stat,readdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
-import {join} from 'node:path';
+import {join,relative} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {readJsonFile} from '../src/file-io.js';
 
@@ -57,4 +58,43 @@ test('portable skills-only package works after extraction into a path with space
   assert.equal(bounded.total.tokens.knownTotal,121200);assert.equal(bounded.threads.length,100);assert.equal(bounded.omitted.threads,1);
   assert.equal(bounded.appliedRates.length,1);assert.ok(JSON.stringify(bounded).length<100000);
  }finally{await rm(dir,{recursive:true,force:true});}
+});
+
+test('client builds add only native manifests and integrity metadata',async()=>{
+ execFileSync(process.execPath,['scripts/build-client-packages.js']);
+ const regularFiles=async dir=>{
+  const found=[];
+  for(const entry of await readdir(dir,{withFileTypes:true})){
+   const path=join(dir,entry.name);
+   if(entry.isDirectory())found.push(...await regularFiles(path));
+   else if(entry.isFile())found.push(path);
+   else assert.fail(`unexpected package entry: ${path}`);
+  }
+  return found;
+ };
+ for(const client of ['codex','claude','cursor']){
+  const dir=join('dist-clients',client,'ai-usage-lens');
+  const portable=JSON.parse(await readFile(join(dir,'plugin.json'),'utf8'));
+  assert.equal(portable.name,'ai-usage-lens');
+  const checks=JSON.parse(await readFile(join(dir,'checksums.json'),'utf8'));
+  assert.equal(checks.algorithm,'sha256');
+  assert.ok(checks.files.some(file=>file.path==='skills/token-lens/SKILL.md'));
+  assert.ok(checks.files.some(file=>file.path==='docs/CLIENT_PACKAGES.md'));
+  assert.ok(checks.files.every(file=>/^[a-f0-9]{64}$/.test(file.sha256)&&file.bytes>0));
+  const files=(await regularFiles(dir)).map(path=>relative(dir,path).split('\\').join('/')).filter(path=>path!=='checksums.json').sort();
+  assert.deepEqual(checks.files.map(file=>file.path).sort(),files);
+  for(const file of checks.files){
+   const data=await readFile(join(dir,file.path));
+   assert.equal(file.bytes,data.length);
+   assert.equal(file.sha256,createHash('sha256').update(data).digest('hex'));
+  }
+  await assert.rejects(stat(join(dir,'mcp.json')));
+  await assert.rejects(stat(join(dir,'.mcp.json')));
+  await assert.rejects(stat(join(dir,'hooks')));
+ }
+ const codex=JSON.parse(await readFile('dist-clients/codex/ai-usage-lens/.codex-plugin/plugin.json','utf8'));
+ assert.equal(codex.skills,'./skills/');
+ const claude=JSON.parse(await readFile('dist-clients/claude/ai-usage-lens/.claude-plugin/plugin.json','utf8'));
+ assert.equal(claude.name,'ai-usage-lens');
+ await assert.rejects(stat('dist-clients/cursor/ai-usage-lens/.cursor-plugin'));
 });

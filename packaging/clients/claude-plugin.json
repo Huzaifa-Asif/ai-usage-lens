@@ -1,0 +1,9 @@
+{
+  "name": "ai-usage-lens",
+  "version": "0.3.0",
+  "description": "Analyze user-provided usage ledgers and explain estimated costs with transparent manual optimization guidance.",
+  "author": {"name": "Huzaifa Asif"},
+  "homepage": "https://ai-usage-lens.vercel.app/",
+  "repository": "https://github.com/Huzaifa-Asif/ai-usage-lens",
+  "license": "MIT"
+}
