@@ -1,7 +1,1 @@
-.connection { margin: 28px 0 14px; border-color: #acd2c2; background: linear-gradient(135deg, #fff, #f1faf6); }
-.scope-box { background: #f6f8f6; border: 1px solid var(--line); border-radius: 10px; padding: 15px; margin: 14px 0; }
-.scope-box ul { margin: 8px 0; }
-.connection pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #17221d; color: #e8fff5; padding: 14px; border-radius: 9px; }
-.fallback { margin: 14px 0 24px; padding: 13px 16px; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
-.fallback summary { cursor: pointer; font-weight: 700; }
-.fallback .hero-actions { justify-content: flex-start; margin-top: 12px; }
+.connection{margin:0}.connection pre{max-height:180px;overflow:auto}.fallback .hero-actions{justify-content:flex-start;margin:14px 0}

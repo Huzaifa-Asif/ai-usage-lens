@@ -4,7 +4,7 @@ Release architecture: [hosted static dashboard and local companion](docs/DEPLOYM
 
 AI Usage Lens is the finalized product name. Existing `token-lens/*` data schemas, `token-lens-selection` browser storage, `token_lens_local` client identity, `token-lens-local` private package name, and `skill/token-lens` path are retained for compatibility. Existing imports and saved choices continue to work.
 
-AI Usage Lens is a local-first MVP for exploring token usage per thread and per model request, estimating API-equivalent cost from a dated user-supplied rate card, and producing transparent optimization guidance. It does **not** claim access to unseen ChatGPT/Codex transcripts, actual provider billing, or a global prompt-setting switch.
+AI Usage Lens is a local-first app for exploring token usage by conversation and model request, estimating API-equivalent cost from a dated user-supplied rate card, and producing transparent optimization guidance. It does **not** claim access to unseen ChatGPT/Codex/Cursor transcripts, actual provider billing where none is reported, or a global prompt-setting switch.
 
 ## Quick start
 
@@ -17,7 +17,7 @@ npm test
 npm start
 ```
 
-Open `http://127.0.0.1:4173`. The primary path uses an explicit button through the same-origin loopback server; Codex quotas and configured Admin aggregates return directly to the dashboard. No browser credential is requested. CLI capture/import remains fallback, and neither route is continuous synchronization. For a terminal summary:
+Open `http://127.0.0.1:4173`. Explicit same-origin actions can read Codex account usage from an existing local session and Cursor team aggregates when `CURSOR_API_KEY` is configured in the server environment. No browser credential is requested. CLI capture/import remains fallback, and no route is continuous synchronization. See [Cursor connection](docs/CURSOR_CONNECTION.md). For a terminal summary:
 
 ```sh
 npm run cli -- examples/ledger.json examples/prices.json
@@ -27,7 +27,7 @@ An optional explicit read-only Codex App Server collector is documented in [docs
 
 The separately authenticated OpenAI organization Admin API has a bounded environment-key CLI collector documented in [docs/ADMIN_API_CONNECTION.md](docs/ADMIN_API_CONNECTION.md). It collects only aggregate usage/cost buckets and cannot provide retrospective thread/message attribution.
 
-Connection status: when launched with `npm start`, the same-origin loopback server exposes two explicit POST-only collection actions with strict Host/Origin validation. Codex quota data and Admin aggregates return directly to separate dashboard views without a file handoff. CLI capture/import remains a fallback. Neither path provides background synchronization, automatic login, or persistent access.
+Connection status: when launched with `npm start`, the same-origin loopback server exposes explicit POST-only collection actions with strict Host/Origin validation. Codex quota/activity data, Cursor team aggregates, and optional OpenAI organization aggregates return to separate views without a file handoff. CLI capture/import remains a fallback. No path provides background synchronization, automatic login, or persistent access.
 
 ## Useful now
 
@@ -37,7 +37,7 @@ Connection status: when launched with `npm start`, the same-origin loopback serv
 - Price selection by model and effective date; currencies are never converted or combined.
 - Missing usage and unknown prices remain visible instead of becoming zero.
 - Stable-ID deduplication; conflicting duplicates and cumulative snapshots fail closed.
-- Rule-based, evidence-bearing suggestions with manual checklist and optional Codex hook-context previews.
+- Rule-based, evidence-bearing suggestions with manual checklist, optional Codex hook-context previews, and editable Codex/Cursor `SKILL.md` exports.
 - Browser-only processing and preferences. The local server serves static files and has no ingest endpoint.
 - Tested adapters for saved Responses API objects and captured, authorized Codex App Server token events.
 
@@ -60,6 +60,8 @@ See [docs/IMPORT.md](docs/IMPORT.md), [schemas/ledger.schema.json](schemas/ledge
 ## Optimization scope
 
 Suggestions are deterministic rules over imported data. Selecting one creates a preview that the user can copy. The manual checklist is suitable for ChatGPT or Codex. The Codex JSON is only developer context for an intentionally configured trusted local hook. It is not a prompt rewrite or global setting. Reset removes the selection from browser local storage.
+
+The Optimization studio can also generate an editable, downloadable `SKILL.md` for Codex or Cursor from supported aggregate signals. The generator uses fixed templates and validated numeric evidence; prompt text, conversation titles, message IDs, source labels, account identity, and credentials are never inserted. It does not install a skill, create folders, change settings, or guarantee savings. See [skill exports](docs/SKILL_EXPORTS.md).
 
 ## Development
 

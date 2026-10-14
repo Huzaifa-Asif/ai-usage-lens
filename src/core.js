@@ -43,6 +43,7 @@ export function normalizeLedger(raw) {
     const occurredAt = text(r.occurredAt, `${p}.occurredAt`, ri);
     if (occurredAt && !Number.isFinite(Date.parse(occurredAt))) ri.push(`${p}.occurredAt must be ISO-8601`);
     const model = text(r.model, `${p}.model`, ri);
+    const provider = r.provider == null ? null : text(r.provider, `${p}.provider`, ri, false);
     const inputTokens = nullableInt(r.usage?.inputTokens, `${p}.usage.inputTokens`, ri);
     const cachedInputTokens = nullableInt(r.usage?.cachedInputTokens, `${p}.usage.cachedInputTokens`, ri);
     const cacheWriteInputTokens = nullableInt(r.usage?.cacheWriteInputTokens, `${p}.usage.cacheWriteInputTokens`, ri);
@@ -55,12 +56,21 @@ export function normalizeLedger(raw) {
     if (r.kind && !["model_response", "tool_result", "other"].includes(r.kind)) ri.push(`${p}.kind is invalid`);
     const record = {
       id, threadId, messageId, occurredAt, model,
+      provider,
+      conversationTitle: r.conversationTitle == null ? null : text(r.conversationTitle, `${p}.conversationTitle`, ri, false),
+      messageRole: r.messageRole == null ? null : text(r.messageRole, `${p}.messageRole`, ri, false),
+      parentMessageId: r.parentMessageId == null ? null : text(r.parentMessageId, `${p}.parentMessageId`, ri, false),
+      finishReason: r.finishReason == null ? null : text(r.finishReason, `${p}.finishReason`, ri, false),
+      durationMs: nullableInt(r.durationMs, `${p}.durationMs`, ri),
+      contextWindowTokens: nullableInt(r.contextWindowTokens, `${p}.contextWindowTokens`, ri),
       kind: r.kind || "model_response",
       usage: { inputTokens, cachedInputTokens, cacheWriteInputTokens, outputTokens, reasoningTokens },
       promptChars: nullableInt(r.promptChars, `${p}.promptChars`, ri),
       repeatedContextChars: nullableInt(r.repeatedContextChars, `${p}.repeatedContextChars`, ri),
       source: typeof r.source === "string" && r.source ? r.source.slice(0, 200) : "imported",
-      accountNamespace: typeof r.accountNamespace === "string" && r.accountNamespace ? r.accountNamespace.slice(0, 200) : "default"
+      accountNamespace: typeof r.accountNamespace === "string" && r.accountNamespace ? r.accountNamespace.slice(0, 200) : "default",
+      sourceProvenance: r.sourceProvenance == null ? null : text(r.sourceProvenance, `${p}.sourceProvenance`, ri, false),
+      reportedCost: normalizeReportedCost(r.reportedCost, `${p}.reportedCost`, ri)
     };
     if (record.kind === "tool_result" && [inputTokens, outputTokens, cachedInputTokens, cacheWriteInputTokens, reasoningTokens].some(v => v !== null && v !== 0)) {
       ri.push(`${p}: tool_result cannot carry billable model usage automatically`);
@@ -119,6 +129,7 @@ function selectRate(record, rates) {
 
 export function estimateRecord(record, priceTable) {
   if (record.kind !== "model_response") return { status: "not_billable", amount: null, currency: null, rate: null };
+  if (record.reportedCost) return { status: "provider_reported", amount: record.reportedCost.amount, currency: record.reportedCost.currency, rate: null, provenance: record.reportedCost.provenance };
   const u = record.usage; const rate = selectRate(record, priceTable.rates);
   if (!rate) return { status: "unknown_price", amount: null, currency: null, rate: null };
   if (u.inputTokens === null || u.outputTokens === null) return { status: "missing_usage", amount: null, currency: rate.currency, rate };
@@ -153,11 +164,46 @@ function add(g, r) {
     for (const [k, field] of [["input","inputTokens"],["cached","cachedInputTokens"],["cacheWrite","cacheWriteInputTokens"],["output","outputTokens"],["reasoning","reasoningTokens"]]) g.tokens[k] += u[field] || 0;
     g.tokens.knownTotal += (u.inputTokens || 0) + (u.outputTokens || 0);
   }
-  if (r.cost.status === "estimated") g.costs[r.cost.currency] = (g.costs[r.cost.currency] || 0) + r.cost.amount;
+  if (["estimated","provider_reported"].includes(r.cost.status)) g.costs[r.cost.currency] = (g.costs[r.cost.currency] || 0) + r.cost.amount;
   if (r.cost.status === "unknown_price") g.unknownPrice++;
   if (r.cost.status === "not_billable") g.notBillable++;
 }
 function finish(g) { return { ...g, rate: g.tokens.input ? g.tokens.cached / g.tokens.input : null }; }
+
+function normalizeReportedCost(value,path,issues){
+  if(value==null)return null;
+  if(!value||typeof value!=="object"||Array.isArray(value)){issues.push(`${path} must be an object or null`);return null;}
+  const amount=value.amount;
+  if(typeof amount!=="number"||!Number.isFinite(amount)||amount<0){issues.push(`${path}.amount must be a non-negative number`);return null;}
+  const currency=text(value.currency,`${path}.currency`,issues).toUpperCase();
+  if(currency&&!ALLOWED_CURRENCIES.test(currency))issues.push(`${path}.currency must be a 3-letter code`);
+  const provenance=text(value.provenance,`${path}.provenance`,issues);
+  return {amount,currency,provenance};
+}
+
+/** Aggregate request deltas into local-time calendar buckets for accessible charts. */
+export function aggregateUsage(records,granularity="daily",timeZone="UTC"){
+  if(!["daily","weekly","monthly"].includes(granularity))throw new LedgerError("Invalid chart granularity");
+  try{new Intl.DateTimeFormat("en-CA",{timeZone}).format(new Date())}catch{throw new LedgerError("Invalid chart timezone")}
+  const partsFor=date=>Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date).filter(x=>x.type!=="literal").map(x=>[x.type,x.value]));
+  const keyFor=value=>{const p=partsFor(new Date(value));let key=`${p.year}-${p.month}-${p.day}`;if(granularity==="monthly")return key.slice(0,7);if(granularity==="weekly"){const date=new Date(`${key}T00:00:00Z`),day=(date.getUTCDay()+6)%7;date.setUTCDate(date.getUTCDate()-day);key=date.toISOString().slice(0,10);}return key;};
+  const buckets=new Map();
+  for(const record of records){const key=keyFor(record.occurredAt);if(!buckets.has(key))buckets.set(key,{key,tokens:0,costs:{},estimatedCosts:{},reportedCosts:{},records:0,unknownCosts:0});const b=buckets.get(key);b.records++;if(record.kind==="model_response")b.tokens+=(record.usage.inputTokens||0)+(record.usage.outputTokens||0);if(["estimated","provider_reported"].includes(record.cost?.status)){b.costs[record.cost.currency]=(b.costs[record.cost.currency]||0)+record.cost.amount;const target=record.cost.status==="estimated"?b.estimatedCosts:b.reportedCosts;target[record.cost.currency]=(target[record.cost.currency]||0)+record.cost.amount}else if(record.kind==="model_response")b.unknownCosts++;}
+  return [...buckets.values()].sort((a,b)=>a.key.localeCompare(b.key));
+}
+
+/** Add stable context accumulation using every request in a conversation, ordered by time. */
+export function withContextAccumulation(records){
+  const totals=new Map(),values=new Map();
+  const ordered=[...records].sort((a,b)=>Date.parse(a.occurredAt)-Date.parse(b.occurredAt)||a.id.localeCompare(b.id));
+  for(const record of ordered){
+    const key=JSON.stringify([record.source,record.accountNamespace,record.threadId]);
+    if(record.usage.inputTokens===null){values.set(record,null);continue;}
+    const total=(totals.get(key)||0)+record.usage.inputTokens;
+    totals.set(key,total);values.set(record,total);
+  }
+  return records.map(record=>({...record,_displayContextTotal:values.get(record)??null}));
+}
 
 export function suggestions(analysis) {
   const out = [];

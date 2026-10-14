@@ -30,7 +30,7 @@ test('portable skills-only package works after extraction into a path with space
  try{
   await cp('dist-plugin',dir,{recursive:true});
   const manifest=JSON.parse(await readFile(join(dir,'plugin.json'),'utf8'));
-  assert.equal(manifest.name,'ai-usage-lens');assert.equal(manifest.version,'0.2.2');
+  assert.equal(manifest.name,'ai-usage-lens');assert.equal(manifest.version,'0.3.0');
   assert.equal(JSON.parse(await readFile(join(dir,'package.json'),'utf8')).type,'module');
   assert.ok(manifest.extensions['com.openai'].interface.shortDescription.length<=30);
   const icon=await readFile(join(dir,manifest.extensions['com.openai'].interface.logo),'utf8');

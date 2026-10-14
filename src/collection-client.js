@@ -1,4 +1,4 @@
-const PATHS=new Set(['/api/collect/codex','/api/collect/admin']);
+const PATHS=new Set(['/api/collect/codex','/api/collect/admin','/api/collect/cursor']);
 const cancelled=()=>Object.assign(new Error('cancelled'),{name:'AbortError'});
 
 /** One in-flight collection; cancelled/stale responses never reach the renderer. */

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0 — Conversation analytics and live source expansion
+
+- Adopted the restrained graphite/silver Promptalio visual language while retaining AI Usage Lens identity, with persistent light/dark theme choice and reduced-motion behavior.
+- Added conversation and message drill-down, provider/model/conversation filters, provenance, explicit unknowns, context evidence, and measured-versus-estimated cost labels.
+- Added timezone-aware daily, weekly, and monthly token/cost charts with a semantic table alternative.
+- Kept the documented one-shot Codex App Server connection and added a server-side Cursor Team Admin API connection using `CURSOR_API_KEY`; no browser credential form or general OAuth claim.
+- Minimized Cursor results inside the companion: member identity fields are discarded and daily rows are aggregated before reaching the browser.
+- Added editable, download-only Codex and Cursor `SKILL.md` drafts generated from validated aggregate evidence, with no auto-install or settings mutation.
+- Made context accumulation chronological across complete conversations and made provider/model/conversation filters apply to the trend chart.
+- Kept subscription utilization and quota windows separate from request-level API cost evidence.
+
 ## 0.2.2 — Local plugin release readiness
 
 - Added a portable skills-only manifest, original icon, local marketplace packaging, and canonical manual-analysis skill.

@@ -1,0 +1,1 @@
+(()=>{try{const saved=localStorage.getItem("ai-usage-lens-theme"),system=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.dataset.theme=saved||system}catch{document.documentElement.dataset.theme="dark"}})();
