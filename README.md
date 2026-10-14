@@ -23,7 +23,7 @@ Open `http://127.0.0.1:4173`. Explicit same-origin actions can read Codex accoun
 npm run cli -- examples/ledger.json examples/prices.json
 ```
 
-An optional explicit read-only Codex App Server collector is documented in [docs/CODEX_COLLECTOR.md](docs/CODEX_COLLECTOR.md). It is never run automatically, performs no login or settings changes, and was tested only against a stub process—not a real account.
+An optional explicit read-only Codex App Server collector is documented in [docs/CODEX_COLLECTOR.md](docs/CODEX_COLLECTOR.md). It is never run automatically and performs no login or settings changes. Automated coverage uses a stub; a separately consented live check on 2026-10-14 confirmed the two allowlisted account reads against an existing signed-in session without retaining the temporary capture.
 
 The separately authenticated OpenAI organization Admin API has a bounded environment-key CLI collector documented in [docs/ADMIN_API_CONNECTION.md](docs/ADMIN_API_CONNECTION.md). It collects only aggregate usage/cost buckets and cannot provide retrospective thread/message attribution.
 
@@ -45,7 +45,7 @@ Connection status: when launched with `npm start`, the same-origin loopback serv
 
 The OpenAI Responses API exposes request usage fields. Cached input is included within input, and reasoning is included within output, so AI Usage Lens subtracts cached input from ordinary input pricing and never adds reasoning again. Prompt caching is automatic on supported API models and benefits stable prefixes, but a cache hit is not guaranteed. See the official [Prompt caching guide](https://developers.openai.com/api/docs/guides/prompt-caching) and [API pricing](https://developers.openai.com/api/docs/pricing).
 
-Codex App Server documents `thread/tokenUsage/updated` plus authenticated `account/usage/read` summaries. Account activity can be unavailable and is not message-level billing. The import adapter remains offline. Separately, the optional `--live` collector can spawn an already installed, already authenticated local App Server and make only two allowlisted account reads; it never logs in, stores credentials, or runs automatically. See the official [Codex App Server docs](https://learn.chatgpt.com/docs/app-server).
+Codex App Server documents `thread/tokenUsage/updated` plus authenticated `account/usage/read` summaries. Account activity can be unavailable and is not message-level billing. The import adapter remains offline. Separately, the optional `--live` collector can spawn an already installed, already authenticated local App Server and make only two allowlisted account reads; it never logs in, stores credentials, or runs automatically. See the official [Codex App Server docs](https://developers.openai.com/codex/app-server).
 
 When authorized `account/usage/read` returns thread estimates, the adapter preserves provider-estimated credit micros and nullable USD micros separately with `provider_estimate_not_invoice` provenance. These values are never merged with rate-card API estimates or presented as an invoice.
 
@@ -80,3 +80,5 @@ The browser sends only same-origin requests. The static hosted build has no back
 ## Status
 
 This is an honest local MVP, not a provider billing product. Browser visual inspection may still vary by browser; core behavior and server delivery are covered by automated tests. MIT licensed.
+
+Store packaging, submission, approval and publication are distinct milestones. The current per-store routes and blockers are recorded in [store submission readiness](docs/STORE_SUBMISSION.md); none of the generated local packages should be described as store-published.
