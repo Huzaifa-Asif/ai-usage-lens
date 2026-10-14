@@ -18,7 +18,7 @@ No source publication, hosted deployment, credential creation, persistent grant,
 
 ## Verification
 
-- `npm run check`: 96 passed, 0 failed, 1 skipped. The skipped synthetic HTTP socket test reports sandbox `EPERM`; equivalent handler, cancellation, and retry behavior is covered without a socket.
+- `npm run check`: 98 passed, 0 failed, 1 skipped. The skipped synthetic HTTP socket test reports sandbox `EPERM`; equivalent handler, cancellation, and retry behavior is covered without a socket.
 - `npm run build:static`: passed. Output contains no server, collectors, credentials, or account data.
 - `npm run build:plugin`: passed. Output contains no server, collectors, hooks, credentials, or account data.
 - `git diff --check`: passed.
@@ -29,6 +29,6 @@ No source publication, hosted deployment, credential creation, persistent grant,
 
 The 0.2.2 unpublished checkpoint was reconstructed exactly from preserved artifacts before work began and saved locally as commit `d9870c042a52d6b6cbbe85f3ef72cf46ca79f702`. The release ledger verifies public source `main` at 0.2.1; the hosted version was not inspected and remains separately unverified. The historical automatic approval rejection applied to the maintenance push, which later succeeded only after explicit publication authorization. No 0.3.0 publication was attempted. This checkout's `origin` is a local handoff bundle rather than the GitHub write remote, so a new source push needs explicit approval for the exact repository/branch and external write. Deploying `dist-hosted/` separately needs a named site/project and explicit approval.
 
-The current candidate also includes credential-free Codex, Claude Code and Cursor delivery plans, effective-consumer disclosure, exact-plan approval, an allowlisted local adapter with idempotency/collision protection/rollback, and frozen company-submission review boundaries. Tests exercise disposable synthetic client directories only. No real client root, persistent grant, Promptalio tenant, hosted database, reviewer assignment, sharing state or vendor sync was changed.
+The current candidate also includes a reachable one-shot CLI for credential-free Codex, Claude Code and Cursor discovery, dry-run review, effective-consumer disclosure, exact-plan consent, apply, byte verification and receipt-bound rollback. Tests exercise disposable synthetic client directories only. Company submission is unavailable: its local module is a contract-test model and has no Promptalio API, database or publication integration. No real client root, persistent grant, Promptalio tenant, hosted database, reviewer assignment, sharing state or vendor sync was changed.
 
 Promptalio remained read-only at branch `handoff/promptalio-visual-refresh`, commit `e63e15fb84556e6e3ede0cc341fbe887dedb47ec`.

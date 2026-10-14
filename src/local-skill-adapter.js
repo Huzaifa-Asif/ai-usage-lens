@@ -30,7 +30,7 @@ async function atomicWrite(path, bytes) {
   await writeFile(temporary, bytes, { flag: "wx", mode: 0o600 });
   await rename(temporary, path);
 }
-const receiptDigest = receipt => createHash("sha256").update(JSON.stringify(Object.fromEntries(Object.entries(receipt || {}).filter(([key]) => key !== "replayed")))).digest("hex");
+export const installReceiptDigest = receipt => createHash("sha256").update(JSON.stringify(Object.fromEntries(Object.entries(receipt || {}).filter(([key]) => key !== "replayed")))).digest("hex");
 const validTime = value => Number.isFinite(new Date(value).getTime());
 const validateApproval = (plan, approval) => {
   if (approval?.schemaVersion !== "ai-usage-lens/install-approval-v1" || approval.planDigest !== plan.planDigest || !validTime(approval.approvedAt)) throw new Error("approval_mismatch");
@@ -59,10 +59,38 @@ export async function discoverClientTargets({ candidates = [], allowedBase } = {
     await rejectSymlinks(base, root);
     const normalized = root.split(sep).join("/");
     const effectiveConsumers = normalized.endsWith("/.agents/skills") ? ["codex", "cursor"] : normalized.endsWith("/.claude/skills") ? ["claude", "cursor"] : [candidate.client];
-    targets.push({ id: candidate.id, client: candidate.client, rootId: candidate.id, scope: candidate.scope || "personal", effectiveConsumers, status: "discovered_unverified" });
+    targets.push({ id: candidate.id, client: candidate.client, rootId: candidate.id, rootPathDigest: contentDigest(root), scope: candidate.scope || "personal", effectiveConsumers, status: "discovered_unverified" });
     roots[candidate.id] = root;
   }
   return { targets, roots };
+}
+
+export async function previewInstallPlan({ plan, roots, allowedBase } = {}) {
+  verifyInstallPlan(plan);
+  const base = resolve(allowedBase), results = [];
+  for (const destination of plan.destinations) {
+    safeRootId(destination.rootId);
+    const root = roots?.[destination.rootId];
+    if (!root) { results.push({ rootId: destination.rootId, state: "offline" }); continue; }
+    const resolvedRoot = resolve(root);
+    if (destination.rootPathDigest && contentDigest(resolvedRoot) !== destination.rootPathDigest) { results.push({ rootId: destination.rootId, state: "policy_blocked", error: "reviewed_root_changed" }); continue; }
+    if (!inside(base, resolvedRoot)) { results.push({ rootId: destination.rootId, state: "policy_blocked", error: "root_outside_allowed_base" }); continue; }
+    const target = resolve(resolvedRoot, destination.relativePath);
+    if (!inside(resolvedRoot, target)) { results.push({ rootId: destination.rootId, state: "policy_blocked", error: "path_escape" }); continue; }
+    await rejectSymlinks(base, target);
+    const current = await exists(target) ? await readFile(target, "utf8") : null;
+    const marker = join(dirname(target), ".ai-usage-lens-managed.json");
+    const ownership = await exists(marker) ? JSON.parse(await readFile(marker, "utf8")) : null;
+    const expected = destination.expectedBinding;
+    let state = "ready", proposedAction = plan.action === "remove" ? "remove" : current ? "update" : "install", error = null;
+    if (plan.action !== "install" && (!ownership || ownership.itemId !== expected?.itemId || ownership.versionId !== expected?.versionId || ownership.contentDigest !== expected?.contentDigest || !current || contentDigest(current) !== expected.contentDigest)) { state = "conflict"; error = "reviewed_state_changed"; }
+    else if (plan.action === "install" && current) {
+      if (ownership?.itemId === plan.itemId && ownership.contentDigest === contentDigest(current) && contentDigest(current) === plan.contentDigest) proposedAction = "noop";
+      else { state = "conflict"; error = "target_already_exists"; }
+    }
+    results.push({ rootId: destination.rootId, relativePath: destination.relativePath, target, state, proposedAction, error, selectedClients: destination.selectedClients, effectiveConsumers: destination.effectiveConsumers, beforeDigest: current === null ? null : contentDigest(current), afterDigest: plan.action === "remove" ? null : plan.contentDigest, beforeBytes: current === null ? 0 : Buffer.byteLength(current), afterBytes: plan.action === "remove" ? 0 : Buffer.byteLength(plan.content) });
+  }
+  return { schemaVersion: "ai-usage-lens/install-preview-v1", planDigest: plan.planDigest, action: plan.action, expiresAt: plan.expiresAt, disclosures: plan.disclosures, results };
 }
 
 export async function applyInstallPlan({ plan, approval, roots, allowedBase, journalDir, operationId, now = new Date() } = {}) {
@@ -71,6 +99,7 @@ export async function applyInstallPlan({ plan, approval, roots, allowedBase, jou
   validateApproval(plan, approval);
   if (new Date(plan.expiresAt).getTime() <= new Date(now).getTime()) throw new Error("plan_expired");
   const base = resolve(allowedBase), journalRoot = resolve(journalDir);
+  if (plan.boundary && (contentDigest(base) !== plan.boundary.allowedBaseDigest || contentDigest(journalRoot) !== plan.boundary.journalRootDigest)) throw new Error("reviewed_boundary_changed");
   if (!inside(base, journalRoot)) throw new Error("journal_outside_allowed_base");
   await rejectSymlinks(base, journalRoot);
   await mkdir(journalRoot, { recursive: true });
@@ -87,6 +116,7 @@ export async function applyInstallPlan({ plan, approval, roots, allowedBase, jou
     const root = roots?.[destination.rootId];
     if (!root) { results.push({ rootId: destination.rootId, state: "offline" }); continue; }
     const resolvedRoot = resolve(root);
+    if (destination.rootPathDigest && contentDigest(resolvedRoot) !== destination.rootPathDigest) { results.push({ rootId: destination.rootId, state: "policy_blocked", error: "reviewed_root_changed" }); continue; }
     if (!inside(base, resolvedRoot)) { results.push({ rootId: destination.rootId, state: "policy_blocked", error: "root_outside_allowed_base" }); continue; }
     const target = resolve(resolvedRoot, destination.relativePath);
     if (!inside(resolvedRoot, target)) { results.push({ rootId: destination.rootId, state: "policy_blocked", error: "path_escape" }); continue; }
@@ -101,21 +131,21 @@ export async function applyInstallPlan({ plan, approval, roots, allowedBase, jou
       await atomicWrite(quarantine, current); await atomicWrite(markerQuarantine, await readFile(marker, "utf8"));
       await rm(target);
       await rm(marker, { force: true });
-      results.push({ rootId: destination.rootId, relativePath: destination.relativePath, state: "files_verified", action: "removed", quarantine, markerQuarantine, beforeDigest: contentDigest(current) });
+      results.push({ rootId: destination.rootId, rootPathDigest: destination.rootPathDigest, relativePath: destination.relativePath, state: "files_verified", action: "removed", quarantine, markerQuarantine, beforeDigest: contentDigest(current) });
       continue;
     }
     if (plan.action === "install" && current) {
-      if (ownership?.itemId === plan.itemId && ownership.contentDigest === contentDigest(current) && contentDigest(current) === plan.contentDigest) { results.push({ rootId: destination.rootId, relativePath: destination.relativePath, state: "files_verified", action: "noop", afterDigest: plan.contentDigest }); continue; }
+      if (ownership?.itemId === plan.itemId && ownership.contentDigest === contentDigest(current) && contentDigest(current) === plan.contentDigest) { results.push({ rootId: destination.rootId, rootPathDigest: destination.rootPathDigest, relativePath: destination.relativePath, state: "files_verified", action: "noop", afterDigest: plan.contentDigest }); continue; }
       results.push({ rootId: destination.rootId, state: "conflict", error: "target_already_exists" }); continue;
     }
     if (plan.action === "update" && !current) { results.push({ rootId: destination.rootId, state: "conflict", error: "managed_target_missing" }); continue; }
     if (current && (!ownership || ownership.contentDigest !== contentDigest(current))) { results.push({ rootId: destination.rootId, state: "conflict", error: "modified_or_unmanaged" }); continue; }
-    if (current && contentDigest(current) === plan.contentDigest) { results.push({ rootId: destination.rootId, relativePath: destination.relativePath, state: "files_verified", action: "noop", afterDigest: plan.contentDigest }); continue; }
+    if (current && contentDigest(current) === plan.contentDigest) { results.push({ rootId: destination.rootId, rootPathDigest: destination.rootPathDigest, relativePath: destination.relativePath, state: "files_verified", action: "noop", afterDigest: plan.contentDigest }); continue; }
     let quarantine = null, markerQuarantine = null;
     if (current) { quarantine = join(journalRoot, `${operationId}-${destination.rootId}.bak`); markerQuarantine = join(journalRoot, `${operationId}-${destination.rootId}.marker.bak`); await atomicWrite(quarantine, current); await atomicWrite(markerQuarantine, await readFile(marker, "utf8")); }
     await atomicWrite(target, plan.content);
     await atomicWrite(marker, JSON.stringify({ schemaVersion: "ai-usage-lens/managed-skill-v1", itemId: plan.itemId, versionId: plan.versionId, contentDigest: plan.contentDigest, planDigest: plan.planDigest }) + "\n");
-    results.push({ rootId: destination.rootId, relativePath: destination.relativePath, state: "files_verified", action: current ? "updated" : "installed", quarantine, markerQuarantine, afterDigest: plan.contentDigest, activation: "pending_client_confirmation" });
+    results.push({ rootId: destination.rootId, rootPathDigest: destination.rootPathDigest, relativePath: destination.relativePath, state: "files_verified", action: current ? "updated" : "installed", quarantine, markerQuarantine, afterDigest: plan.contentDigest, activation: "pending_client_confirmation" });
   }
   const receipt = { schemaVersion: "ai-usage-lens/operation-receipt-v1", operationId, planDigest: plan.planDigest, journalRoot, completedAt: new Date(now).toISOString(), results, replayed: false };
   await atomicWrite(receiptPath, JSON.stringify(receipt, null, 2) + "\n");
@@ -125,11 +155,11 @@ export async function applyInstallPlan({ plan, approval, roots, allowedBase, jou
 export function approveRollback(receipt, { actorId, now = new Date() } = {}) {
   safeId(receipt?.operationId); safeId(actorId);
   if (typeof receipt?.planDigest !== "string" || !receipt.planDigest || typeof receipt?.journalRoot !== "string") throw new Error("invalid_receipt");
-  return { schemaVersion: "ai-usage-lens/rollback-approval-v1", operationId: receipt.operationId, planDigest: receipt.planDigest, receiptDigest: receiptDigest(receipt), actorId, approvedAt: new Date(now).toISOString() };
+  return { schemaVersion: "ai-usage-lens/rollback-approval-v1", operationId: receipt.operationId, planDigest: receipt.planDigest, receiptDigest: installReceiptDigest(receipt), actorId, approvedAt: new Date(now).toISOString() };
 }
 
 export async function rollbackInstallOperation({ receipt, approval, roots, allowedBase } = {}) {
-  if (approval?.schemaVersion !== "ai-usage-lens/rollback-approval-v1" || approval.operationId !== receipt?.operationId || approval.planDigest !== receipt?.planDigest || approval.receiptDigest !== receiptDigest(receipt) || !validTime(approval.approvedAt)) throw new Error("rollback_approval_mismatch");
+  if (approval?.schemaVersion !== "ai-usage-lens/rollback-approval-v1" || approval.operationId !== receipt?.operationId || approval.planDigest !== receipt?.planDigest || approval.receiptDigest !== installReceiptDigest(receipt) || !validTime(approval.approvedAt)) throw new Error("rollback_approval_mismatch");
   safeId(approval.actorId);
   const base = resolve(allowedBase), journalRoot = resolve(receipt.journalRoot), results = [];
   if (!inside(base, journalRoot)) throw new Error("journal_outside_allowed_base");
@@ -139,6 +169,7 @@ export async function rollbackInstallOperation({ receipt, approval, roots, allow
     safeRootId(result.rootId);
     const root = roots?.[result.rootId]; if (!root) { results.push({ rootId: result.rootId, state: "offline" }); continue; }
     const resolvedRoot = resolve(root); if (!inside(base, resolvedRoot)) throw new Error("root_outside_allowed_base");
+    if (result.rootPathDigest && contentDigest(resolvedRoot) !== result.rootPathDigest) throw new Error("reviewed_root_changed");
     const target = resolve(resolvedRoot, result.relativePath), marker = join(dirname(target), ".ai-usage-lens-managed.json");
     if (!inside(resolvedRoot, target)) throw new Error("path_escape");
     await rejectSymlinks(base, target);
@@ -157,4 +188,26 @@ export async function rollbackInstallOperation({ receipt, approval, roots, allow
     results.push({ rootId: result.rootId, state: "rolled_back" });
   }
   return { schemaVersion: "ai-usage-lens/rollback-receipt-v1", sourceOperationId: receipt.operationId, results };
+}
+
+export async function verifyInstallReceipt({ receipt, roots, allowedBase } = {}) {
+  safeId(receipt?.operationId);
+  const base = resolve(allowedBase), results = [];
+  for (const result of receipt?.results || []) {
+    if (result.state !== "files_verified") { results.push({ rootId: result.rootId, state: result.state, error: result.error || null }); continue; }
+    safeRootId(result.rootId);
+    const root = roots?.[result.rootId];
+    if (!root) { results.push({ rootId: result.rootId, state: "offline" }); continue; }
+    const resolvedRoot = resolve(root), target = resolve(resolvedRoot, result.relativePath), marker = join(dirname(target), ".ai-usage-lens-managed.json");
+    if (result.rootPathDigest && contentDigest(resolvedRoot) !== result.rootPathDigest) throw new Error("reviewed_root_changed");
+    if (!inside(base, resolvedRoot) || !inside(resolvedRoot, target)) throw new Error("path_escape");
+    await rejectSymlinks(base, target);
+    if (result.action === "removed") {
+      results.push({ rootId: result.rootId, state: !(await exists(target)) && !(await exists(marker)) ? "verified" : "verification_failed", expected: "absent" });
+      continue;
+    }
+    const current = await exists(target) ? await readFile(target, "utf8") : null;
+    results.push({ rootId: result.rootId, state: current !== null && contentDigest(current) === result.afterDigest ? "verified" : "verification_failed", expectedDigest: result.afterDigest, actualDigest: current === null ? null : contentDigest(current) });
+  }
+  return { schemaVersion: "ai-usage-lens/install-verification-v1", operationId: receipt.operationId, verified: results.every(value => value.state === "verified"), results };
 }

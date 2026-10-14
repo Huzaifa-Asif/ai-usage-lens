@@ -25,7 +25,7 @@ const slug = value => {
   return result;
 };
 
-export function createInstallPlan({ item, version, targets, expectedBindings = {}, action = "install", mode = "copy", now = new Date(), ttlMs = 15 * 60_000 } = {}) {
+export function createInstallPlan({ item, version, targets, expectedBindings = {}, boundary = null, action = "install", mode = "copy", now = new Date(), ttlMs = 15 * 60_000 } = {}) {
   if (!ACTIONS.has(action)) throw new Error("unsupported_action");
   if (!MODES.has(mode)) throw new Error("unsupported_mode");
   if (!Array.isArray(targets) || targets.length === 0) throw new Error("targets_required");
@@ -48,7 +48,10 @@ export function createInstallPlan({ item, version, targets, expectedBindings = {
       if (!expected || opaqueId(expected.itemId, "expected_item_id") !== itemId || typeof expected.contentDigest !== "string" || !/^[a-f0-9]{64}$/.test(expected.contentDigest)) throw new Error("expected_binding_required");
       expectedBinding = { itemId, versionId: opaqueId(expected.versionId, "expected_version_id"), contentDigest: expected.contentDigest };
     }
-    const destination = destinations.get(key) || { rootId, relativePath: `${itemSlug}/SKILL.md`, targetIds: [], selectedClients: [], effectiveConsumers: [], expectedBinding };
+    const rootPathDigest = target.rootPathDigest == null ? null : text(target.rootPathDigest, "root_path_digest");
+    if (rootPathDigest !== null && !/^[a-f0-9]{64}$/.test(rootPathDigest)) throw new Error("invalid_root_path_digest");
+    const destination = destinations.get(key) || { rootId, rootPathDigest, relativePath: `${itemSlug}/SKILL.md`, targetIds: [], selectedClients: [], effectiveConsumers: [], expectedBinding };
+    if (destination.rootPathDigest !== rootPathDigest) throw new Error("conflicting_root_path");
     if (JSON.stringify(destination.expectedBinding) !== JSON.stringify(expectedBinding)) throw new Error("conflicting_expected_binding");
     destination.targetIds.push(id);
     destination.selectedClients.push(client);
@@ -63,7 +66,8 @@ export function createInstallPlan({ item, version, targets, expectedBindings = {
     .filter(consumer => !selectedClients.has(consumer))
     .map(consumer => ({ code: "unselected_effective_consumer", rootId: destination.rootId, relativePath: destination.relativePath, consumer })));
   const issuedAt = new Date(now).toISOString(), expiresAt = new Date(new Date(now).getTime() + ttlMs).toISOString();
-  const core = { schemaVersion: "ai-usage-lens/install-plan-v1", itemId, itemSlug, versionId, contentDigest, content: version.content, action, mode, issuedAt, expiresAt, destinations: normalizedDestinations, disclosures };
+  if (boundary !== null && (!/^[a-f0-9]{64}$/.test(boundary?.allowedBaseDigest || "") || !/^[a-f0-9]{64}$/.test(boundary?.journalRootDigest || ""))) throw new Error("invalid_delivery_boundary");
+  const core = { schemaVersion: "ai-usage-lens/install-plan-v1", itemId, itemSlug, versionId, contentDigest, content: version.content, action, mode, issuedAt, expiresAt, destinations: normalizedDestinations, disclosures, boundary };
   return { ...core, planDigest: digest(core) };
 }
 

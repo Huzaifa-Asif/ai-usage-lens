@@ -8,7 +8,7 @@ const version = { id: "v4", files: [{ path: "SKILL.md", content: skillContent, d
 const company = { tenantId: "tenant-1", libraryId: "company-library" };
 const author = { userId: "author", tenantId: "tenant-1", role: "contributor", membershipStatus: "active" };
 
-test("company submission is a frozen, privacy-scoped fork", () => {
+test("company submission contract model produces a frozen privacy-scoped fork", () => {
   const submission = createCompanySubmission({ item, version, actor: author, company, audience: ["engineering"], now: "2026-10-14T00:00:00Z" });
   assert.equal(submission.state, "submitted");
   assert.deepEqual(submission.snapshot.files, [{ path: "SKILL.md", content: skillContent, digest: skillDigest }]);
@@ -16,7 +16,7 @@ test("company submission is a frozen, privacy-scoped fork", () => {
   assert.equal(reviewCompanySubmission(submission, { userId: "reviewer", tenantId: "tenant-1", role: "reviewer", membershipStatus: "active" }, "approved").publicationState, "approved_not_published");
 });
 
-test("membership, roles, ownership and separation of duties are enforced", () => {
+test("company submission contract model enforces membership, roles, ownership and separation of duties", () => {
   assert.throws(() => createCompanySubmission({ item, version, actor: { ...author, membershipStatus: "removed" }, company, audience: ["engineering"] }), /active_membership_required/);
   assert.throws(() => createCompanySubmission({ item: { ...item, ownerUserId: "other" }, version, actor: author, company, audience: ["engineering"] }), /personal_item_access_denied/);
   assert.throws(() => createCompanySubmission({ item, version: { ...version, files: [{ ...version.files[0], digest: "wrong" }] }, actor: author, company, audience: ["engineering"] }), /invalid_version_snapshot/);
