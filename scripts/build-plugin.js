@@ -1,0 +1,13 @@
+import {cp,mkdir,rm,copyFile} from 'node:fs/promises';import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url)),output=root+'dist-plugin';
+await rm(output,{recursive:true,force:true});await mkdir(output+'/src',{recursive:true});
+for(const name of ['plugin.json','LICENSE','PRIVACY.md','SECURITY.md','SUPPORT.md','CONTRIBUTING.md','CODE_OF_CONDUCT.md','CHANGELOG.md'])await copyFile(root+name,output+'/'+name);
+await copyFile(root+'packaging/README.md',output+'/README.md');
+await copyFile(root+'packaging/package.json',output+'/package.json');
+for(const name of ['SUPPORT.md','SECURITY.md'])await copyFile(root+'packaging/'+name,output+'/'+name);
+for(const name of ['core.js','cli.js','file-io.js'])await copyFile(root+'src/'+name,output+'/src/'+name);
+for(const name of ['skills','examples','assets','schemas'])await cp(root+name,output+'/'+name,{recursive:true});
+await mkdir(output+'/.agents/plugins',{recursive:true});await copyFile(root+'packaging/marketplace.json',output+'/.agents/plugins/marketplace.json');
+await mkdir(output+'/docs',{recursive:true});for(const name of ['LOCAL_PLUGIN.md','REVIEW_CASES.md','IMPORT.md'])await copyFile(root+'docs/'+name,output+'/docs/'+name);
+await copyFile(root+'packaging/IMPORT.md',output+'/docs/IMPORT.md');
+console.log('Skills-only package: dist-plugin (no server, collectors, hooks, credentials, or account data)');

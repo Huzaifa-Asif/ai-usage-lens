@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 — Local plugin release readiness
+
+- Added a portable skills-only manifest, original icon, local marketplace packaging, and canonical manual-analysis skill.
+- Added an extracted-package build and tests; the package excludes servers, account collectors, hooks, and credentials.
+- Bounded CLI input reads to 10 MB per file and sanitized filesystem/JSON errors.
+- Documented native installation, undo, review scenarios, and the distinction between local packaging and directory approval.
+
 ## 0.2.1 — October 13 MYT maintenance
 
 - Cancel aborts the matching browser request and propagates through HTTP disconnect to the bounded local collector.

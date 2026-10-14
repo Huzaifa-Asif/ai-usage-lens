@@ -29,3 +29,5 @@ jobs:
         run: npm run check
       - name: Build static edition
         run: npm run build:static
+      - name: Build skills-only plugin
+        run: npm run build:plugin

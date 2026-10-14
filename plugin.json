@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ai-usage-lens",
+  "version": "0.2.2",
+  "description": "Analyze user-provided usage ledgers and explain estimated costs with transparent manual optimization guidance.",
+  "author": {"name": "Huzaifa Asif", "url": "https://github.com/Huzaifa-Asif"},
+  "homepage": "https://ai-usage-lens.vercel.app/",
+  "repository": "https://github.com/Huzaifa-Asif/ai-usage-lens",
+  "license": "MIT",
+  "keywords": ["usage", "tokens", "cost-estimates", "offline-analysis"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "AI Usage Lens",
+        "shortDescription": "Inspect tokens and estimates",
+        "longDescription": "Offline analysis of user-selected request ledgers and dated rates. Reports missing usage and unknown prices explicitly; suggestions are manually applied. The skills-only package does not connect accounts or intercept prompts.",
+        "developerName": "Huzaifa Asif",
+        "category": "Productivity",
+        "capabilities": ["Analyze provided usage files", "Explain price estimates", "Draft manual optimization guidance"],
+        "websiteURL": "https://ai-usage-lens.vercel.app/",
+        "supportURL": "https://github.com/Huzaifa-Asif/ai-usage-lens/blob/main/SUPPORT.md",
+        "privacyPolicyURL": "https://github.com/Huzaifa-Asif/ai-usage-lens/blob/main/PRIVACY.md",
+        "composerIcon": "./assets/logo.svg",
+        "logo": "./assets/logo.svg",
+        "defaultPrompt": ["Analyze my usage ledger and dated price table.", "Explain unknown costs without filling missing data."]
+      }
+    }
+  }
+}

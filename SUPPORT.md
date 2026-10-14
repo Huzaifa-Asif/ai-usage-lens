@@ -1,7 +1,7 @@
 # Support and troubleshooting
 
 - `Invalid ledger`: inspect the listed field paths; use `null` for unavailable counts.
-- `cumulative snapshots are unsupported`: transform upstream snapshots into trusted per-request deltas, or use the Codex event adapter's latest-per-turn strategy.
+- `cumulative snapshots are unsupported`: transform upstream snapshots into trusted per-request deltas, or use the full application's Codex event adapter, which keeps the latest cumulative snapshot per thread and never sums snapshots as requests.
 - `unknown price`: add the exact model and a rate effective on or before the request date.
 - Blank browser: use Node 20+, run `npm start`, and open the exact loopback URL shown.
 - Clipboard unavailable: select the preview text manually.

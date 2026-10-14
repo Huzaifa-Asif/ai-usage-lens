@@ -39,7 +39,7 @@ export function collectCodexReadOnly(options){
         if(msg.error)return fail(msg.id===2?"rate_limits_read_failed":"usage_read_failed");
         if(!Object.hasOwn(msg,"result")||results.has(msg.id))return fail("malformed_response");
         results.set(msg.id,msg.result);
-        if(results.size===2){const capturedAt=new Date().toISOString();let quotaSnapshot,accountActivity;try{quotaSnapshot=normalizeCodexRateLimits(results.get(2),{capturedAt});accountActivity=normalizeCodexAccountActivity(results.get(3));}catch{return fail("malformed_response")}finish(null,{schemaVersion:CAPTURE_SCHEMA,capturedAt,provenance:{collectorVersion:"0.2.1",transport:"stdio",readOnly:true,methods:["account/rateLimits/read","account/usage/read"],threadScopedUsage:o.threadId??null},quotaSnapshot,accountActivity,raw:{rateLimits:results.get(2),usage:results.get(3)}});}
+        if(results.size===2){const capturedAt=new Date().toISOString();let quotaSnapshot,accountActivity;try{quotaSnapshot=normalizeCodexRateLimits(results.get(2),{capturedAt});accountActivity=normalizeCodexAccountActivity(results.get(3));}catch{return fail("malformed_response")}finish(null,{schemaVersion:CAPTURE_SCHEMA,capturedAt,provenance:{collectorVersion:"0.2.2",transport:"stdio",readOnly:true,methods:["account/rateLimits/read","account/usage/read"],threadScopedUsage:o.threadId??null},quotaSnapshot,accountActivity,raw:{rateLimits:results.get(2),usage:results.get(3)}});}
       }
     };
     const onAbort=()=>fail("cancelled");
@@ -50,6 +50,6 @@ export function collectCodexReadOnly(options){
     child.stdin.on("error",()=>fail("stdin_closed"));
     child.stderr.on("data",chunk=>{stderrBytes+=chunk.length;if(stderrBytes>o.maxBytes)fail("output_limit_exceeded")});
     child.stdout.on("data",chunk=>{bytes+=chunk.length;if(bytes>o.maxBytes)return fail("output_limit_exceeded");buffer+=chunk.toString("utf8");let i;while((i=buffer.indexOf("\n"))>=0&&!done){const line=buffer.slice(0,i);buffer=buffer.slice(i+1);if(!line.trim())continue;let msg;try{msg=JSON.parse(line)}catch{return fail("malformed_response")}accept(msg);}});
-    send({method:"initialize",id:1,params:{clientInfo:{name:"token_lens_local",title:"AI Usage Lens local read-only collector",version:"0.2.1"}}});
+    send({method:"initialize",id:1,params:{clientInfo:{name:"token_lens_local",title:"AI Usage Lens local read-only collector",version:"0.2.2"}}});
   });
 }

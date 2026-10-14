@@ -1,12 +1,13 @@
 {
   "name": "token-lens-local",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
   "description": "Local-first token and estimated-cost explorer",
   "scripts": {
     "start": "node src/server.js",
     "build:static": "node scripts/build-static.js",
+    "build:plugin": "node scripts/build-plugin.js",
     "test": "node --test",
     "check": "node scripts/check-syntax.js && npm test",
     "integration": "node --test test/http-integration.test.js test/bridge-lifecycle.test.js",

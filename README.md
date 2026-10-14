@@ -8,6 +8,8 @@ AI Usage Lens is a local-first MVP for exploring token usage per thread and per 
 
 ## Quick start
 
+For the installable skills-only edition, run `npm run build:plugin` and follow [local plugin instructions](docs/LOCAL_PLUGIN.md). It contains the offline CLI and manual guidance skill, not account collectors or prompt-interception hooks. Native installation and public-directory approval are separate verification steps.
+
 Requires Node.js 20+ and no third-party packages.
 
 ```sh
