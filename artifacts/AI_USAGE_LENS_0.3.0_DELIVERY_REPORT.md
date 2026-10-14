@@ -1,9 +1,6 @@
 # AI Usage Lens 0.3.0 delivery
 
 - Source commit: `2b846b6f08da8a61d59063577b382b50473e3bd6`
-- Source archive: `ai-usage-lens-source-v0.3.0.tgz`
-- Source archive SHA-256: `9e38b21f2f8ebbc01c4e4c9f6f9baa6454d0543b4b40047f5617c310161ec64b`
-- Source archive size: 97,897 bytes
 - Automated verification: 100 tests total; 99 passed, 0 failed, 1 sandbox loopback skip
 - Builds: static hosted, skills-only plugin and native Codex/Claude/Cursor packages passed; Claude strict manifest validation passed
 - Browser QA: dark/light desktop, 390 × 844 mobile, reduced motion, daily/weekly/monthly charts, filters, message drill-down, connection states, editable skill draft, and export initiation; no console warnings/errors
